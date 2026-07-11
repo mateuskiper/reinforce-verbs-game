@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Na Ponta da Língua · Treino de Verbos e Modais em Inglês</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;900&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#141019; --bg2:#1d1727; --paper:#f8f4ec; --ink:#211b2e; --soft:#8a8398;
+    --inkc:#cbc4d8; --coral:#f4623a; --corald:#d94a24; --gold:#e0a83c; --teal:#2f9e8f;
+    --green:#3fae7c; --violet:#6d5ae6; --line:#332a44; --r:18px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%}
+  body{
+    background:radial-gradient(140% 120% at 50% -10%, #241c33 0%, var(--bg) 55%);
+    color:var(--paper); font-family:'Inter',system-ui,sans-serif;
+    min-height:100dvh; display:flex; flex-direction:column; align-items:center;
+    padding:calc(14px + env(safe-area-inset-top)) calc(14px + env(safe-area-inset-right)) calc(24px + env(safe-area-inset-bottom)) calc(14px + env(safe-area-inset-left));
+    -webkit-font-smoothing:antialiased; overflow-x:hidden; overflow-wrap:break-word;
+  }
+  button,input{touch-action:manipulation}
+  .wrap{width:100%;max-width:560px}
+  .kicker{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.15em;
+    text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:8px}
+  .kicker::before{content:"";width:22px;height:2px;background:var(--coral)}
+  h1{font-family:'Archivo',sans-serif;font-weight:900;font-size:clamp(22px,6vw,30px);
+    letter-spacing:-.02em;line-height:1;margin:6px 0 12px}
+  h1 em{font-style:normal;color:var(--coral)}
+
+  .stats{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px}
+  .mastery{flex:1;min-width:110px;background:var(--bg2);border:1px solid var(--line);border-radius:99px;height:12px;overflow:hidden}
+  .mastery>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--gold),var(--coral));transition:width .5s ease}
+  .stat{font-family:'Space Mono',monospace;font-size:12px;color:var(--inkc);white-space:nowrap;
+    background:var(--bg2);border:1px solid var(--line);border-radius:99px;padding:5px 10px;display:flex;align-items:center;gap:5px}
+  .stat b{color:#fff}
+  .flame{color:var(--gold)}
+  button.stat{cursor:pointer;transition:.15s}
+  button.stat:hover{border-color:#4a3f63}
+
+  /* hero: treino do dia */
+  .hero{width:100%;margin-bottom:10px;font-family:'Archivo',sans-serif;font-weight:900;font-size:17px;color:#fff;
+    background:linear-gradient(135deg,var(--coral),var(--corald));border:none;border-radius:14px;padding:13px 14px;
+    cursor:pointer;display:flex;flex-direction:column;gap:3px;align-items:center;transition:.15s;
+    box-shadow:0 12px 26px -14px rgba(244,98,58,.7)}
+  .hero:hover{transform:translateY(-1px)}
+  .hero small{font-family:'Space Mono',monospace;font-size:10.5px;font-weight:400;opacity:.92;letter-spacing:.04em}
+
+  /* tabs */
+  .tabs{display:flex;gap:5px;margin-bottom:12px}
+  .tab{flex:1;min-width:0;min-height:44px;display:flex;align-items:center;justify-content:center;
+    font-family:'Inter';font-weight:600;font-size:clamp(10.5px,3vw,12px);line-height:1.15;padding:6px 4px;border-radius:12px;
+    border:1px solid var(--line);background:var(--bg2);color:var(--inkc);cursor:pointer;transition:.15s;text-align:center}
+  .tab:hover{border-color:#4a3f63}
+  .tab.on-verbs{background:var(--teal);border-color:var(--teal);color:#fff}
+  .tab.on-modals{background:var(--violet);border-color:var(--violet);color:#fff}
+  .tab.on-hhh{background:var(--gold);border-color:var(--gold);color:#fff}
+  .tab.on-error{background:var(--coral);border-color:var(--coral);color:#fff}
+
+  .card{background:var(--paper);color:var(--ink);border-radius:var(--r);overflow:hidden;
+    box-shadow:0 22px 46px -22px rgba(0,0,0,.75);border:1px solid #e4d8c4;min-height:340px;display:flex;flex-direction:column}
+  .ribbon{padding:9px 16px;font-family:'Space Mono',monospace;font-size:11px;font-weight:700;
+    letter-spacing:.12em;text-transform:uppercase;color:#fff;display:flex;align-items:center;gap:8px}
+  .ribbon.verbs{background:var(--teal)}
+  .ribbon.modals{background:var(--violet)}
+  .ribbon.hhh{background:var(--gold)}
+  .ribbon.error{background:var(--coral)}
+  .ribbon.daily{background:linear-gradient(90deg,var(--coral),var(--gold))}
+  .body{padding:14px 14px 16px;flex:1;display:flex;flex-direction:column}
+
+  /* progress (treino do dia) */
+  .prog{display:flex;align-items:center;gap:8px;margin-bottom:12px;font-family:'Space Mono',monospace;font-size:11px;color:var(--soft)}
+  .prog .bar{flex:1;height:8px;background:#eee4d2;border-radius:99px;overflow:hidden}
+  .prog .bar>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--coral));transition:width .3s}
+
+  /* ===== memory board ===== */
+  .board{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .cell{position:relative;aspect-ratio:1/0.78;perspective:800px;cursor:pointer}
+  .cell .inner{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .35s cubic-bezier(.2,.7,.3,1)}
+  .cell.open .inner,.cell.done .inner{transform:rotateY(180deg)}
+  .face2{position:absolute;inset:0;backface-visibility:hidden;border-radius:12px;display:flex;
+    align-items:center;justify-content:center;padding:7px;text-align:center}
+  .back2{background:var(--ink);color:#5c5470;font-family:'Space Mono',monospace;font-weight:700;font-size:18px;
+    border:1px solid #372f4a}
+  .back2::after{content:"?"}
+  .front2{transform:rotateY(180deg);background:#fff;border:1.5px solid #e0d6c6}
+  .cell .pt{font-family:'Inter';font-weight:600;font-size:clamp(11px,3vw,13.5px);line-height:1.25;color:var(--ink)}
+  .cell .en{font-family:'Space Mono',monospace;font-weight:700;font-size:clamp(13px,3.6vw,16px);color:var(--corald)}
+  .cell.done .front2{background:#e9f6ef;border-color:#9fdcbd}
+  .cell.done{cursor:default}
+  .cell.miss .front2{background:#fdeee9;border-color:#f6cbbc}
+
+  /* learn line */
+  .learn{margin-top:12px;border-radius:12px;background:#fbf7ef;border:1px solid #eadfce;
+    padding:11px 12px;display:none}
+  .learn.show{display:block;animation:pop .2s ease}
+  @keyframes pop{from{transform:scale(.98);opacity:.4}to{transform:scale(1);opacity:1}}
+  .learn .map{font-family:'Inter';font-size:14px;color:var(--ink)}
+  .learn .map b{font-family:'Space Mono',monospace;color:var(--corald)}
+  .learn .use{font-family:'Inter';font-size:12.5px;color:#3d3550;margin-top:4px;line-height:1.4}
+  .learn .use .lab{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:var(--teal);display:block;margin-bottom:1px}
+  .learn .exline{display:flex;align-items:center;gap:9px;margin-top:8px;padding-top:8px;border-top:1px dashed #d9cebc}
+  .learn .ex{font-family:'Inter';font-size:13px;color:#3d3550;line-height:1.35}
+  .learn .ex i{color:var(--soft)}
+  .famline{font-family:'Space Mono',monospace;font-size:11px;margin-top:7px;line-height:1.5}
+
+  .spk{flex-shrink:0;width:32px;height:32px;border-radius:9px;border:1.5px solid var(--ink);background:transparent;
+    color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s}
+  .spk:hover{background:var(--ink);color:var(--paper)}
+  .spk svg{width:15px;height:15px}
+
+  /* board complete overlay */
+  .doneMsg{margin-top:12px;text-align:center;display:none}
+  .doneMsg.show{display:block}
+  .doneMsg .big{font-family:'Archivo';font-weight:900;font-size:20px;color:var(--green)}
+  .doneMsg .sub{font-family:'Space Mono',monospace;font-size:12px;color:var(--soft);margin-top:2px}
+  .nextBoard{width:100%;margin-top:10px;font-family:'Inter';font-weight:700;font-size:16px;color:#fff;
+    background:var(--coral);border:none;border-radius:12px;padding:13px;cursor:pointer;transition:.15s}
+  .nextBoard:hover{background:var(--corald)}
+
+  /* ===== single exercises (choice / typed) ===== */
+  .einstr{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.05em;color:var(--corald);text-transform:uppercase;margin-bottom:12px}
+  .scen{font-family:'Inter';font-size:13px;color:#3d3550;background:#f3ecdf;border-radius:10px;padding:9px 11px;margin-bottom:12px;line-height:1.4}
+  .esent{font-family:'Inter';font-size:clamp(18px,5vw,24px);font-weight:600;line-height:1.45;color:var(--ink)}
+  .esent .gapx{color:var(--corald);border-bottom:2px dashed var(--coral);padding:0 4px;letter-spacing:2px}
+  .esent .hint{font-family:'Space Mono',monospace;font-size:13px;color:var(--soft);font-weight:400;white-space:nowrap}
+  .ebad{color:var(--corald);text-decoration:underline wavy var(--coral);text-underline-offset:4px;font-weight:700}
+  .emean{font-family:'Inter';font-style:italic;font-size:13px;color:var(--soft);margin-top:10px}
+
+  .choices{display:flex;flex-direction:column;gap:8px;margin-top:16px}
+  .choices.big{flex-direction:row;flex-wrap:wrap}
+  .choice{font-family:'Space Mono',monospace;font-weight:700;font-size:16px;text-align:left;padding:12px 14px;border-radius:12px;
+    border:2px solid #e0d6c6;background:#fff;color:var(--ink);cursor:pointer;transition:.15s}
+  .choices.big .choice{flex:1 1 30%;text-align:center;font-size:17px;padding:15px 8px}
+  .choice:hover{border-color:var(--gold)}
+  .choice.ok{background:#e9f6ef;border-color:var(--green)}
+  .choice.no{background:#fdeee9;border-color:var(--coral)}
+  .choice.dim{opacity:.45}
+  .choice:disabled{cursor:default}
+
+  .inrow{margin-top:auto;padding-top:16px;display:flex;gap:8px}
+  #answer{flex:1;font-family:'Space Mono',monospace;font-size:18px;font-weight:700;color:var(--ink);
+    background:#fff;border:2px solid #e0d6c6;border-radius:12px;padding:13px 14px;outline:none;transition:.15s;min-width:0}
+  #answer:focus{border-color:var(--coral)}
+  #answer::placeholder{color:#c3bab0;font-weight:400}
+  #go{font-family:'Inter';font-weight:700;font-size:16px;color:#fff;background:var(--ink);border:none;
+    border-radius:12px;padding:0 20px;cursor:pointer;transition:.15s}
+  #go:hover{background:#000}
+  #go:disabled{opacity:.5;cursor:default}
+
+  .fb{border-radius:12px;padding:13px 14px;margin-top:12px;display:none}
+  .fb.show{display:block;animation:pop .2s ease}
+  .fb.ok{background:#e9f6ef;border:1px solid #bfe6d1}
+  .fb.no{background:#fdeee9;border:1px solid #f6cbbc}
+  .fb .verdict{font-family:'Space Mono',monospace;font-weight:700;font-size:13px;letter-spacing:.04em}
+  .fb.ok .verdict{color:var(--green)}
+  .fb.no .verdict{color:var(--corald)}
+  .fb .sol{font-family:'Inter';font-size:14px;color:var(--ink);margin-top:6px}
+  .fb .sol b{font-family:'Space Mono',monospace}
+  .fb .why{font-family:'Inter';font-size:12.5px;color:#3d3550;margin-top:4px;line-height:1.4}
+  .fb .exline{display:flex;align-items:center;gap:9px;margin-top:9px;padding-top:9px;border-top:1px dashed #d9cebc}
+  .fb .ex{font-family:'Inter';font-size:13px;color:#3d3550;line-height:1.35}
+  .fb .ex i{color:var(--soft)}
+  #next{width:100%;margin-top:12px;font-family:'Inter';font-weight:700;font-size:16px;color:#fff;
+    background:var(--coral);border:none;border-radius:12px;padding:13px;cursor:pointer;display:none;transition:.15s}
+  #next.show{display:block}
+  #next:hover{background:var(--corald)}
+
+  /* ===== daily summary ===== */
+  .sum{text-align:center;padding-top:8px}
+  .sum .big{font-family:'Archivo';font-weight:900;font-size:24px;color:var(--green)}
+  .sum .score{font-family:'Space Mono',monospace;font-size:14px;color:#3d3550;margin-top:6px}
+  .sum .day{font-family:'Space Mono',monospace;font-size:12px;color:var(--soft);margin-top:2px}
+  .sum h4{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin:16px 0 6px}
+  .sumchips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+  .sumchip{font-family:'Space Mono',monospace;font-size:12px;font-weight:700;border-radius:8px;padding:5px 9px}
+  .sumchip.up{background:#e9f6ef;color:#237a52;border:1px solid #bfe6d1}
+  .sumchip.dn{background:#fdeee9;color:var(--corald);border:1px solid #f6cbbc}
+
+  /* ===== album de famílias ===== */
+  .album{position:fixed;inset:0;background:rgba(10,7,15,.75);display:none;align-items:flex-start;justify-content:center;
+    padding:calc(16px + env(safe-area-inset-top)) 14px calc(16px + env(safe-area-inset-bottom));overflow:auto;z-index:50;
+    -webkit-overflow-scrolling:touch}
+  .album.show{display:flex}
+  .albcard{background:var(--paper);color:var(--ink);border-radius:var(--r);max-width:560px;width:100%;padding:0 16px 20px;position:relative}
+  .albhead{position:sticky;top:0;z-index:2;background:var(--paper);display:flex;justify-content:space-between;
+    align-items:flex-start;gap:10px;padding:15px 0 10px;border-bottom:1px solid #eadfce}
+  .albtitle{min-width:0}
+  .albcard h2{font-family:'Archivo';font-weight:900;font-size:clamp(17px,5vw,20px);line-height:1.05}
+  .albcard .albsub{font-family:'Space Mono',monospace;font-size:11px;color:var(--soft);margin-top:3px;line-height:1.4}
+  .albclose{flex-shrink:0;width:38px;height:38px;border-radius:10px;border:1.5px solid var(--ink);
+    background:transparent;color:var(--ink);font-size:16px;cursor:pointer;transition:.15s}
+  .albclose:hover,.albclose:active{background:var(--ink);color:var(--paper)}
+  .albfam{margin-top:14px}
+  .albfam h3{font-family:'Archivo';font-weight:700;font-size:14px;display:flex;align-items:center;gap:7px}
+  .albfam h3 .dot{width:10px;height:10px;border-radius:3px;display:inline-block}
+  .albfam .tip{font-family:'Inter';font-size:12px;color:var(--soft);margin-top:2px}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
+  .chip{font-family:'Space Mono',monospace;font-size:11px;border:1.5px solid #e0d6c6;border-radius:8px;padding:5px 8px;background:#fff;color:var(--ink)}
+  .chip b{color:var(--corald)}
+  .chip.mid{background:#fbf3df;border-color:#e8d6a8}
+  .chip.done{background:#e9f6ef;border-color:#9fdcbd}
+
+  /* botão de ajuda no ribbon */
+  .ribhelp{margin-left:auto;font-family:'Inter';font-weight:700;font-size:11px;color:#fff;
+    background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.4);border-radius:99px;
+    padding:4px 11px;cursor:pointer;transition:.15s}
+  .ribhelp:hover{background:rgba(255,255,255,.32)}
+  .ribhelp.hide{display:none}
+
+  /* ===== card de ajuda ===== */
+  .helpnav{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+  .hchip{font-family:'Inter';font-weight:600;font-size:12.5px;border:1.5px solid #e0d6c6;border-radius:99px;
+    padding:7px 13px;background:#fff;color:var(--soft);cursor:pointer;transition:.15s}
+  .hchip:hover{border-color:#c9bda6}
+  .hchip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .helpitem{border-top:1px solid #eadfce;padding:11px 2px}
+  .helpitem:first-child{border-top:none}
+  .helpitem .hw{font-family:'Space Mono',monospace;font-weight:700;font-size:15px;color:var(--corald)}
+  .helpitem .hw .tr{color:var(--soft);font-family:'Inter';font-weight:500;font-size:12.5px}
+  .helpitem .forms{font-family:'Space Mono',monospace;font-size:11.5px;color:#5a5270;margin-top:3px;line-height:1.5}
+  .helpitem .forms b{color:var(--ink)}
+  .helpitem .htip{font-family:'Inter';font-size:12.5px;color:#3d3550;margin-top:4px;line-height:1.42}
+  .helpitem .hex{display:flex;align-items:flex-start;gap:8px;margin-top:5px}
+  .helpitem .hex .spk{width:26px;height:26px;flex-shrink:0}
+  .helpitem .hex .spk svg{width:12px;height:12px}
+  .helpitem .hex span{font-family:'Inter';font-size:12.5px;color:var(--soft);font-style:italic;line-height:1.35}
+
+  .foot{margin-top:14px;font-family:'Space Mono',monospace;font-size:10.5px;color:#6f6785;text-align:center;line-height:1.7}
+  .foot a{color:#8a8398;text-decoration:underline;cursor:pointer}
+
+  /* ===== responsividade ===== */
+  .tab,.stat,.choice,.spk,.hchip,.chip,.hero,.ribhelp,.albclose,.nextBoard{touch-action:manipulation}
+
+  /* celulares estreitos */
+  @media (max-width:460px){
+    .stats{gap:6px}
+    .mastery{flex-basis:100%;min-width:0}
+    h1{margin:4px 0 10px}
+    .hero{font-size:16px;padding:12px}
+    .hero small{font-size:10px}
+  }
+  /* celulares muito estreitos */
+  @media (max-width:360px){
+    .tab{font-size:10px;padding:6px 2px}
+    .stat{font-size:11px;padding:5px 8px}
+    .ribbon{padding:8px 12px;font-size:10px;gap:6px}
+    .ribhelp{padding:5px 9px;font-size:10px}
+    .body{padding:12px 12px 14px}
+    .kicker{font-size:10px;letter-spacing:.1em}
+    .einstr{font-size:10.5px}
+  }
+  /* paisagem baixa: aproveita a altura */
+  @media (max-height:560px) and (orientation:landscape){
+    .kicker{display:none}
+    h1{font-size:20px;margin:2px 0 6px}
+    .card{min-height:200px}
+    .hero{margin-bottom:8px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="kicker">Treino ativo · 20 verbos · modais · have/has/had</div>
+  <h1>Na ponta da <em>língua</em></h1>
+
+  <div class="stats">
+    <div class="mastery"><i id="mbar"></i></div>
+    <div class="stat">🎯 <b id="mpct">0%</b></div>
+    <div class="stat"><span class="flame">🔥</span><b id="streak">0</b></div>
+    <button class="stat" id="albBtn" title="Álbum de famílias de verbos">🃏 famílias</button>
+    <button class="stat" id="helpBtn" title="Ajuda — como e quando usar cada palavra">❓ ajuda</button>
+  </div>
+
+  <button class="hero" id="heroBtn">▶ Treino do dia
+    <small><b id="dueN">0</b> pra revisar · ~5 min · 🔥 <b id="dayN">0</b> dia(s) seguidos</small>
+  </button>
+
+  <div class="tabs">
+    <button class="tab" id="tab-verbs">✍ Verbos</button>
+    <button class="tab" id="tab-modals">◆ Modais</button>
+    <button class="tab" id="tab-hhh">have·has·had</button>
+    <button class="tab" id="tab-error">⚠ Caça ao erro</button>
+  </div>
+
+  <div class="card">
+    <div class="ribbon" id="ribbon"><span id="rlabel"></span><button class="ribhelp hide" id="ribHelp" title="Ajuda desta seção">❓ ajuda</button></div>
+    <div class="body" id="gamebody"></div>
+  </div>
+
+  <div class="foot">
+    Todo exercício pede pra <b>escrever a resposta</b> — é assim que a forma gruda na memória<br>
+    O Treino do dia mistura tudo e traz de volta o que você está prestes a esquecer<br>
+    Progresso salvo neste navegador · <a id="resetBtn">zerar progresso</a>
+  </div>
+</div>
+
+<div class="album" id="album">
+  <div class="albcard">
+    <div class="albhead">
+      <div class="albtitle"><h2>Álbum de famílias</h2><div class="albsub" id="albSub"></div></div>
+      <button class="albclose" id="albClose" aria-label="Fechar">✕</button>
+    </div>
+    <div id="albBody"></div>
+  </div>
+</div>
+
+<div class="album help" id="help">
+  <div class="albcard">
+    <div class="albhead">
+      <div class="albtitle"><h2>Ajuda — como &amp; quando usar</h2><div class="albsub" id="helpSub"></div></div>
+      <button class="albclose" id="helpClose" aria-label="Fechar">✕</button>
+    </div>
+    <div class="helpnav" id="helpNav"></div>
+    <div id="helpBody"></div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// DATA — extraído dos guias de estudo em PDF
+// verb: [pt, past, participle, reduced|null, boss, pastEx, partEx, redEx]
+// ============================================================
+const V = {
+ go:["ir","went","gone","gonna",1,["I went to the gym yesterday.","Fui à academia ontem."],["I've gone there a few times.","Já fui lá algumas vezes."],["I'm gonna go tonight.","Vou hoje à noite."]],
+ let:["deixar","let","let","lemme",1,["She let me borrow her car.","Ela me deixou pegar o carro."],["They've let us stay late.","Já nos deixaram ficar até tarde."],["Lemme know when you're free.","Me avisa quando estiver livre."]],
+ get:["conseguir / pegar","got","gotten","gotta",1,["I got a new jacket.","Comprei uma jaqueta nova."],["I've gotten better at this.","Fiquei melhor nisso."],["I gotta go now.","Tenho que ir agora."]],
+ need:["precisar","needed","needed","needa",0,["I needed more time.","Eu precisava de mais tempo."],["I've needed a break for weeks.","Faz semanas que preciso de pausa."],["I needa finish this today.","Preciso terminar isso hoje."]],
+ keep:["continuar / manter","kept","kept",null,1,["He kept calling me all day.","Ele ficou me ligando o dia todo."],["I've kept all your messages.","Guardei todas as suas mensagens."],null],
+ move:["mudar-se / mover","moved","moved",null,0,["They moved to Chicago.","Eles se mudaram pra Chicago."],["I've moved three times this year.","Já me mudei três vezes."],null],
+ give:["dar","gave","given","gimme",1,["She gave me good advice.","Ela me deu um bom conselho."],["He's given up too soon.","Ele desistiu cedo demais."],["Gimme a second.","Me dá um segundo."]],
+ feel:["sentir(-se)","felt","felt",null,1,["I felt tired after the gym.","Me senti cansado depois da academia."],["I've felt this way before.","Já me senti assim antes."],null],
+ run:["correr / acabar","ran","run",null,1,["We ran out of milk again.","O leite acabou de novo."],["I've run five miles today.","Já corri oito km hoje."],null],
+ come:["vir","came","come","c'mon",1,["She came over last night.","Ela veio aqui ontem à noite."],["He hasn't come back yet.","Ele ainda não voltou."],["C'mon, we're gonna be late.","Anda, a gente vai se atrasar."]],
+ call:["ligar / chamar","called","called",null,0,["She called me last night.","Ela me ligou ontem à noite."],["I've called him twice already.","Já liguei pra ele duas vezes."],null],
+ know:["saber / conhecer","knew","known",null,1,["I knew it would happen.","Eu sabia que ia acontecer."],["I've known her for years.","Conheço ela há anos."],null],
+ take:["pegar / levar","took","taken",null,1,["She took my advice.","Ela seguiu meu conselho."],["He's taken the wrong turn.","Ele pegou o caminho errado."],null],
+ make:["fazer","made","made",null,1,["She made a great dinner.","Ela fez um ótimo jantar."],["I've made a decision.","Tomei uma decisão."],null],
+ look:["olhar / procurar","looked","looked",null,0,["I looked everywhere for it.","Procurei em todo lugar."],["I've looked at all the options.","Já olhei todas as opções."],null],
+ want:["querer","wanted","wanted","wanna",0,["I wanted to call you.","Eu queria te ligar."],["I've always wanted to travel.","Sempre quis viajar."],["I wanna go home.","Quero ir pra casa."]],
+ think:["pensar / achar","thought","thought",null,1,["I thought about it a lot.","Pensei muito nisso."],["I've never thought of that.","Nunca pensei nisso."],null],
+ say:["dizer / falar","said","said",null,1,["She said she'd help.","Ela disse que ia ajudar."],["I've said too much.","Falei demais."],null],
+ chill:["relaxar (gíria)","chilled","chilled",null,0,["We chilled at home.","A gente relaxou em casa."],["I have chilled at home all weekend.","Relaxei em casa o fim de semana todo."],null],
+ work:["trabalhar / funcionar","worked","worked",null,0,["I worked late yesterday.","Trabalhei até tarde ontem."],["It hasn't worked so far.","Não funcionou até agora."],null],
+};
+const REDSRC={go:"going to",let:"let me",get:"got to",need:"need to",give:"give me",come:"come on",want:"want to"};
+const PAST_CUE={go:"fui ontem",let:"deixou ontem",get:"consegui ontem",need:"precisei ontem",keep:"guardei ontem",move:"mudaram ontem",give:"deu ontem",feel:"senti ontem",run:"corri ontem",come:"veio ontem",call:"ligou ontem",know:"soube ontem",take:"levei ontem",make:"fez ontem",look:"procurei ontem",want:"quis ontem",think:"pensei ontem",say:"disse ontem",chill:"relaxei ontem",work:"trabalhei ontem"};
+const PART_CUE={go:"já fui",let:"já deixei",get:"já consegui",need:"já precisei",keep:"já guardei",move:"já mudei",give:"já dei",feel:"já senti",run:"já corri",come:"já veio",call:"já liguei",know:"já conheci",take:"já levei",make:"já fiz",look:"já procurei",want:"sempre quis",think:"já pensei",say:"já disse",chill:"já relaxei",work:"já funcionou"};
+const RED_CUE={go:"vou logo",want:"quero ir",get:"tenho que",need:"preciso ir",give:"me dá",let:"me deixa",come:"anda logo"};
+const PRES_CUE={go:"ele vai (sempre)",let:"ela deixa (sempre)",get:"ele chega (sempre)",need:"ela precisa (sempre)",keep:"ele continua (sempre)",move:"ela se muda (sempre)",give:"ele dá (sempre)",feel:"ela se sente (hoje)",run:"ele corre (sempre)",come:"ela vem (sempre)",call:"ele liga (sempre)",know:"ela sabe (sempre)",take:"ele pega (sempre)",make:"ela faz (sempre)",look:"ele parece (hoje)",want:"ela quer (agora)",think:"ele acha (agora)",say:"ela diz (sempre)",chill:"ele relaxa (sempre)",work:"ela trabalha (sempre)"};
+const PRES_EX={
+ go:["He goes to the gym every day.","Ele vai à academia todo dia."],
+ let:["She lets me use her car.","Ela me deixa usar o carro dela."],
+ get:["He gets home late on Fridays.","Ele chega tarde em casa nas sextas."],
+ need:["She needs more time.","Ela precisa de mais tempo."],
+ keep:["He keeps calling me.","Ele fica me ligando."],
+ move:["She moves a lot for work.","Ela se muda muito por trabalho."],
+ give:["He gives her a ride every day.","Ele dá carona pra ela todo dia."],
+ feel:["She feels great today.","Ela se sente ótima hoje."],
+ run:["He runs every morning.","Ele corre toda manhã."],
+ come:["She comes here pretty often.","Ela vem aqui com frequência."],
+ call:["He calls his mom every Sunday.","Ele liga pra mãe todo domingo."],
+ know:["She knows what you mean.","Ela sabe o que você quer dizer."],
+ take:["He takes the bus to work.","Ele pega o ônibus pro trabalho."],
+ make:["She makes coffee every morning.","Ela faz café toda manhã."],
+ look:["He looks tired today.","Ele parece cansado hoje."],
+ want:["She wants some coffee.","Ela quer um café."],
+ think:["He thinks you're right.","Ele acha que você tem razão."],
+ say:["She says what she thinks.","Ela fala o que pensa."],
+ chill:["He just chills on weekends.","Ele só relaxa nos fins de semana."],
+ work:["She works from home.","Ela trabalha de casa."]};
+const WRONGREG={go:"goed",get:"getted",let:"letted",keep:"keeped",give:"gived",feel:"feeled",run:"runned",come:"comed",know:"knowed",take:"taked",make:"maked",think:"thinked",say:"sayed"};
+const ING={go:"going",let:"letting",get:"getting",need:"needing",keep:"keeping",move:"moving",give:"giving",feel:"feeling",run:"running",come:"coming",call:"calling",know:"knowing",take:"taking",make:"making",look:"looking",want:"wanting",think:"thinking",say:"saying",chill:"chilling",work:"working"};
+const REDLIST=["gonna","lemme","gotta","needa","gimme","c'mon","wanna"];
+
+// famílias de irregulares (chunking por padrão)
+const FAM={
+ reg:{label:"Regulares -ed",color:"#2f9e8f",tip:"passado e particípio: é só somar -ed",members:["need","move","call","look","want","chill","work"]},
+ abb:{label:"2× igual",color:"#b8860b",tip:"passado = particípio — uma forma só pra decorar",members:["keep","feel","make","think","say"]},
+ abc:{label:"Muda tudo",color:"#d94a24",tip:"três formas diferentes — os que mais derrubam",members:["go","get","give","know","take"]},
+ aba:{label:"Vai e volta",color:"#6d5ae6",tip:"o particípio volta a ser igual ao presente",members:["run","come"]},
+ aaa:{label:"Invariável",color:"#3fae7c",tip:"nunca muda: let · let · let",members:["let"]}
+};
+const FAM_OF={}; for(const f in FAM) FAM[f].members.forEach(m=>FAM_OF[m]=f);
+
+// ============================================================
+// construção dos itens
+// ============================================================
+function pres3(k){return k==="go"?"goes":k+"s";}
+function gapFrom(ex,answer){
+  const re=new RegExp("\\b"+answer.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"\\b","i");
+  if(!re.test(ex[0])) return null;
+  return [ex[0].replace(re,"___"),ex[1]];
+}
+function pad3(o,fill){for(const e of fill){if(o.length>=3)break;if(!o.some(x=>x.toLowerCase()===e.toLowerCase()))o.push(e);}return o.slice(0,3);}
+function optsPast(k){const d=V[k];let o=[d[1]];if(d[2]!==d[1])o.push(d[2]);const w=WRONGREG[k];if(w&&!o.includes(w))o.push(w);return pad3(o,[k,ING[k]]);}
+function optsPart(k){const d=V[k];let o=[d[2]];if(d[1]!==d[2])o.push(d[1]);const w=WRONGREG[k];if(w&&!o.includes(w))o.push(w);return pad3(o,[k,ING[k]]);}
+function optsPres(k){return [pres3(k),k,ING[k]];}
+function optsRed(red){const others=REDLIST.filter(r=>r!==red);shuffle(others);return [red,others[0],others[1]];}
+
+let ITEMS=[];
+for(const k in V){
+  const d=V[k], fam=FAM_OF[k];
+  ITEMS.push({id:k+"-past",pool:"verbs",kind:"vpast",cue:PAST_CUE[k],answer:d[1],base:k,fam,hint:"("+k+")",
+    use:"cabe “ontem” — aconteceu e acabou"+(d[4]?" · irregular, decore a forma":" · regular (-ed)"),
+    ex:d[5],gap:gapFrom(d[5],d[1]),opts:optsPast(k)});
+  ITEMS.push({id:k+"-part",pool:"verbs",kind:"vpart",cue:PART_CUE[k],answer:d[2],base:k,fam,hint:"("+k+")",
+    use:"sempre com have/has/had (pense “já…”) — resultado que ainda vale",
+    ex:d[6],gap:gapFrom(d[6],d[2]),opts:optsPart(k)});
+  if(d[3]) ITEMS.push({id:k+"-red",pool:"verbs",kind:"vred",cue:RED_CUE[k],answer:d[3],base:k,hint:"("+REDSRC[k]+")",
+    use:REDSRC[k]+" → "+d[3]+" · fala corrida do dia a dia",
+    ex:d[7],gap:gapFrom(d[7],d[3]),opts:optsRed(d[3])});
+  ITEMS.push({id:k+"-pres",pool:"verbs",kind:"vpres",cue:PRES_CUE[k],answer:pres3(k),base:k,hint:"("+k+")",
+    use:"he/she/it no presente → verbo ganha -s ("+k+" → "+pres3(k)+")",
+    ex:PRES_EX[k],gap:gapFrom(PRES_EX[k],pres3(k)),opts:optsPres(k)});
+}
+
+// modais — pares + gap/opções para os níveis de escolha e digitação
+const MODAL_DEFS=[
+ {id:"m-must",cue:"obrigação forte",answer:"must",use:"regra/lei ou dedução — o mais forte. mustn't = proibido.",ex:["You must wear a seatbelt.","Você deve usar cinto."],opts:["must","should","might"]},
+ {id:"m-should",cue:"um conselho",answer:"should",use:"conselho, recomendação — a pessoa decide.",ex:["You should rest.","Você deveria descansar."],opts:["should","must","could"]},
+ {id:"m-can",cue:"habilidade",answer:"can",use:"saber fazer, permissão informal, possibilidade.",ex:["She can swim.","Ela sabe nadar."],opts:["can","could","may"]},
+ {id:"m-could",cue:"pedido educado",answer:"could",use:"pedido educado; habilidade no passado.",ex:["Could you repeat that?","Você poderia repetir?"],opts:["Could","Can","Would"]},
+ {id:"m-would",cue:"no condicional",answer:"would",use:"“faria”; convite educado (Would you like…?).",ex:["I would help you.","Eu te ajudaria."],opts:["would","will","could"]},
+ {id:"m-may",cue:"permissão formal",answer:"may",use:"permissão formal ou possibilidade.",ex:["May I come in?","Posso entrar?"],opts:["May","Must","Would"]},
+ {id:"m-might",cue:"talvez, incerto",answer:"might",use:"possibilidade mais incerta que may.",ex:["It might rain later.","Pode chover mais tarde."],opts:["might","may","will"]},
+ {id:"m-will",cue:"decisão na hora",answer:"will",use:"futuro, promessa, decisão espontânea ('ll). gonna = plano prévio.",ex:["I'll help you!","Eu te ajudo!"],gapEx:["I will call you tonight, I promise.","Vou te ligar hoje à noite, prometo."],opts:["will","would","might"]},
+ {id:"m-shall",cue:"sugestão formal",answer:"shall",use:"sugestão/futuro formal (raro nos EUA).",ex:["Shall we begin?","Vamos começar?"],opts:["Shall","Should","Will"]},
+];
+MODAL_DEFS.forEach(m=>{
+  const src=m.gapEx||m.ex;
+  ITEMS.push({id:m.id,pool:"modals",kind:"modal",cue:m.cue,answer:m.answer,hint:"("+m.cue+")",
+    use:m.use,ex:m.ex,gap:gapFrom(src,m.answer),opts:m.opts});
+});
+
+// cenários — escolha do modal certo pela situação
+const SCEN_DEFS=[
+ ["Seu amigo está fumando demais. Dê um conselho.","You ___ stop smoking.",["should","must","might"],"should","Conselho → should. must seria ordem/lei.","Você deveria parar de fumar."],
+ ["Placa no hospital: é proibido fumar.","You ___ smoke here.",["mustn't","don't have to","shouldn't"],"mustn't","Proibição → mustn't. don't have to = não precisa.","É proibido fumar aqui."],
+ ["A entrada é de graça — pagar é opcional.","You ___ pay to get in.",["don't have to","mustn't","can't"],"don't have to","“Não precisa” → don't have to. mustn't = proibido.","Você não precisa pagar pra entrar."],
+ ["O céu está nublado, mas nada é certo.","It ___ rain later.",["might","must","should"],"might","Possibilidade incerta → might.","Pode ser que chova mais tarde."],
+ ["As luzes estão acesas — conclusão lógica.","They ___ be home.",["must","might","should"],"must","Dedução forte pela evidência → must.","Eles devem estar em casa."],
+ ["Pedido educado a um estranho na rua.","___ you help me with this box?",["Could","Must","Shall"],"Could","Pedido educado → could (ou would).","Você poderia me ajudar com esta caixa?"],
+ ["Oferecendo café com educação.","___ you like some coffee?",["Would","Will","May"],"Would","Oferta/convite educado → would like.","Você gostaria de um café?"],
+ ["Ela tem 5 anos e já sabe nadar.","She ___ swim already!",["can","could","may"],"can","Habilidade no presente → can.","Ela já sabe nadar!"],
+ ["Falando de quando você era criança.","I ___ swim when I was five.",["could","can","might"],"could","Habilidade no passado → could.","Eu sabia nadar quando tinha cinco anos."],
+ ["A campainha toca. Você decide na hora:","I ___ get it!",["will","am gonna","would"],"will","Decisão na hora → will (na fala: I'll get it!). gonna = plano prévio.","Eu atendo!"],
+ ["Vocês planejaram a mudança há meses.","We're ___ move next month.",["gonna","will","would"],"gonna","Plano já decidido → be going to (gonna). will nunca vem depois de 're.","Vamos nos mudar mês que vem."],
+ ["Batendo na porta do chefe, formal.","___ I come in?",["May","Must","Would"],"May","Permissão formal → may.","Posso entrar?"],
+ ["Fazendo uma promessa.","I ___ call you tonight, I promise.",["will","would","might"],"will","Promessa → will.","Vou te ligar hoje à noite, prometo."],
+ ["Sonhando acordado: se você tivesse dinheiro…","If I had money, I ___ travel the world.",["would","will","must"],"would","Condicional (“faria”) → would.","Se eu tivesse dinheiro, viajaria o mundo."],
+ ["Abrindo uma reunião formal.","___ we begin?",["Shall","Will","Do"],"Shall","Sugestão formal → shall (raro nos EUA).","Vamos começar?"],
+ ["É lei: cinto de segurança.","You ___ wear a seatbelt — it's the law.",["must","should","could"],"must","Obrigação por lei → must.","Você deve usar cinto — é lei."],
+ ["Talvez você não vá à festa — ainda não sabe.","I ___ not go to the party.",["might","must","can"],"might","might not = talvez não.","Talvez eu não vá à festa."],
+ ["Segunda você começa a academia — já está decidido.","I'm ___ start the gym on Monday.",["gonna","will","should"],"gonna","Plano prévio com be → gonna (going to).","Vou começar a academia segunda."],
+].map((e,i)=>({id:"sc-"+i,pool:"scen",sc:e[0],s:e[1],opts:e[2],answer:e[3],why:e[4],pt:e[5]}));
+ITEMS=ITEMS.concat(SCEN_DEFS);
+
+// have · has · had — escolha rápida
+const HHH_DEFS=[
+ ["I ___ finished the report.",["have","has","had"],"have","I/you/we/they → have + particípio.","Terminei o relatório."],
+ ["She ___ already left when I arrived.",["have","has","had"],"had","Ação antes de outra ação no passado → had.","Ela já tinha saído quando cheguei."],
+ ["He ___ been to Japan twice.",["have","has","had"],"has","he/she/it → has.","Ele já foi ao Japão duas vezes."],
+ ["They ___ known each other for years.",["have","has","had"],"have","they → have (has é só he/she/it).","Eles se conhecem há anos."],
+ ["We ___ made real progress.",["have","has","had"],"have","we → have.","Fizemos progresso de verdade."],
+ ["It ___ worked so far.",["haven't","hasn't","hadn't"],"hasn't","it → hasn't (negativa de has).","Não funcionou até agora."],
+ ["Do you ___ a car?",["have","has","had"],"have","Aqui have é verbo principal (= ter); depois de do, forma base.","Você tem carro?"],
+ ["___ you eaten yet?",["Have","Has","Had"],"Have","No perfect, o próprio have vira o auxiliar da pergunta.","Você já comeu?"],
+ ["I will ___ finished by Friday.",["have","has","had"],"have","Futuro perfect: will have + particípio (will não muda o have).","Vou ter terminado até sexta."],
+ ["He ___ gone home already.",["have","has","had"],"has","he → has.","Ele já foi pra casa."],
+ ["By the time we arrived, the movie ___ started.",["have","has","had"],"had","Aconteceu antes de outro passado → had.","Quando chegamos, o filme já tinha começado."],
+ ["My parents ___ never been abroad.",["have","has","had"],"have","my parents = they → have.","Meus pais nunca foram pro exterior."],
+ ["The coffee ___ run out.",["have","has","had"],"has","the coffee = it → has.","O café acabou."],
+ ["I ___ never seen snow before that trip.",["have","has","had"],"had","“antes daquela viagem” = passado antes do passado → had.","Eu nunca tinha visto neve antes daquela viagem."],
+ ["She ___ taken my advice before.",["have","has","had"],"has","she → has.","Ela já seguiu meu conselho antes."],
+ ["You ___ to wear a helmet.",["have","has","had"],"have","have to = obrigação; you → have.","Você tem que usar capacete."],
+ ["He ___ to work on Saturdays.",["have","has","had"],"has","has to: he/she/it.","Ele tem que trabalhar aos sábados."],
+ ["I didn't ___ time yesterday.",["have","has","had"],"have","Depois de did/didn't, o verbo fica na base: have.","Não tive tempo ontem."],
+ ["We ___ lived here since 2020.",["have","has","had"],"have","we → have (+ since = presente perfect).","Moramos aqui desde 2020."],
+ ["___ she called you back yet?",["Have","Has","Had"],"Has","she → has, e ele vai pra frente na pergunta.","Ela já te retornou?"],
+ ["They ___ already left when we got there.",["have","has","had"],"had","Antes de outro passado → had.","Eles já tinham saído quando chegamos."],
+ ["I ___ got a lot to do today.",["have","has","had"],"have","have got = ter (na fala: I've got…).","Tenho muita coisa pra fazer hoje."],
+ ["She ___ never let me down.",["have","has","had"],"has","she → has.","Ela nunca me decepcionou."],
+ ["___ they finished the project yet?",["Have","Has","Had"],"Have","they → have.","Eles já terminaram o projeto?"],
+].map((e,i)=>({id:"h-"+i,pool:"hhh",s:e[0],opts:e[1],answer:e[2],why:e[3],pt:e[4]}));
+ITEMS=ITEMS.concat(HHH_DEFS);
+
+// caça ao erro (digitação)
+const ERR_DEFS=[
+ ["I have [[went]] home.","gone","Particípio de go é gone (com have/has/had).","Eu fui pra casa."],
+ ["He [[getted]] a new phone.","got","Passado de get é got.","Ele comprou um celular novo."],
+ ["I have [[took]] the bus.","taken","Particípio: taken (I have taken).","Peguei o ônibus."],
+ ["I have [[knew]] him for years.","known","Particípio: known.","Conheço ele há anos."],
+ ["She has [[gave]] up.","given","Particípio: given.","Ela desistiu."],
+ ["She [[maked]] dinner.","made","Passado e particípio: made.","Ela fez o jantar."],
+ ["I have [[ran]] five miles.","run","Particípio volta a run (I've run).","Corri oito km."],
+ ["She has [[came]] back.","come","Particípio volta a come (has come).","Ela voltou."],
+ ["I [[feeled]] sick.","felt","Passado e particípio: felt.","Me senti mal."],
+ ["He [[keeped]] trying.","kept","Passado e particípio: kept.","Ele continuou tentando."],
+ ["I [[thinked]] about it.","thought","Passado e particípio: thought.","Pensei nisso."],
+ ["She [[sayed]] hi.","said","Passado e particípio: said.","Ela disse oi."],
+ ["She [[letted]] me go.","let","let é invariável: let / let / let.","Ela me deixou ir."],
+ ["I [[is]] happy.","am","Com I, o verbo be é sempre am.","Eu estou feliz."],
+ ["The house was [[build]] in 1990.","built","Voz passiva: be + particípio (built).","A casa foi construída em 1990."],
+ ["They [[has]] finished.","have","they/we/I → have (has é só he/she/it).","Eles terminaram."],
+ ["She [[don't]] like coffee.","doesn't","3ª pessoa (she/he/it): doesn't.","Ela não gosta de café."],
+ ["[[Does]] they live here?","Do","they → Do (does é só he/she/it).","Eles moram aqui?"],
+ ["I didn't [[saw]] it.","see","Depois de did, o verbo fica na base: see.","Eu não vi isso."],
+ ["She [[cans]] swim.","can","Modal não muda de forma: can / can / can.","Ela sabe nadar."],
+ ["He can [[swims]] fast.","swim","Depois do modal, verbo na forma base.","Ele nada rápido."],
+ ["You must [[to wear]] a helmet.","wear","Modal + verbo base, sem “to”.","Você deve usar capacete."],
+ ["You should [[to rest]].","rest","Modal + base, nunca “to”.","Você deveria descansar."],
+ ["He [[wanna]] go home.","wants to","wanna = want to, só com I/you/we/they; com he/she é wants to.","Ele quer ir pra casa."],
+ ["You [[mustn't]] come if you're busy.","don't have to","mustn't = proibido. “Não precisa” = don't have to.","Você não precisa vir se estiver ocupado."],
+ ["She [[have]] finished her homework.","has","he/she/it → has.","Ela terminou a lição."],
+ ["I [[has]] been there twice.","have","has é só he/she/it; com I → have.","Já estive lá duas vezes."],
+ ["It [[haven't]] worked so far.","hasn't","it → hasn't.","Não funcionou até agora."],
+ ["[[Has]] they called you back?","Have","they → have.","Eles te retornaram?"],
+ ["He [[don't]] have to pay.","doesn't","3ª pessoa: doesn't. (don't have to = não precisa)","Ele não precisa pagar."],
+ ["Did you [[went]] home early?","go","Depois de did, o verbo fica na base: go.","Você foi pra casa cedo?"],
+ ["He [[go]] to work by bus.","goes","he/she/it no presente: verbo + s (go → goes).","Ele vai de ônibus pro trabalho."],
+ ["She [[want]] some coffee.","wants","he/she/it no presente: verbo + s.","Ela quer um café."],
+].map((e,i)=>({id:"err-"+i,pool:"error",sentence:e[0],answer:e[1],why:e[2],pt:e[3]}));
+ITEMS=ITEMS.concat(ERR_DEFS);
+
+const VERB_POOL=ITEMS.filter(it=>it.pool==="verbs");
+const MODAL_POOL=ITEMS.filter(it=>it.pool==="modals");
+const SCEN_POOL=ITEMS.filter(it=>it.pool==="scen");
+const HHH_POOL=ITEMS.filter(it=>it.pool==="hhh");
+const ERR_POOL=ITEMS.filter(it=>it.pool==="error");
+const TOTAL=ITEMS.length;
+
+// ============================================================
+// motor SRS (Leitner) + persistência
+// ============================================================
+const KEY="jogo-verbos-v2";
+const IVL=[0, 10*60e3, 864e5, 3*864e5, 7*864e5, 21*864e5]; // caixa 0..5 → próximo due
+let S={it:{},day:{last:"",streak:0}};
+try{
+  const raw=JSON.parse(localStorage.getItem(KEY));
+  if(raw&&raw.it){S.it=raw.it; if(raw.day)S.day=raw.day;}
+}catch(e){}
+ITEMS.forEach(it=>{ if(!Array.isArray(S.it[it.id])) S.it[it.id]=[0,0]; });
+function save(){ try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){} }
+function boxOf(it){return S.it[it.id][0];}
+function isDue(it){return S.it[it.id][1]<=Date.now();}
+
+// escada leve (tudo é digitado): forma isolada → dentro de uma frase
+function verbInSentence(it){ return it.pool==="verbs" && boxOf(it)>=3 && it.gap; }
+
+let streak=0, daily=null, mode="verbs";
+const $=id=>document.getElementById(id);
+
+// cap: pares sobem no máx. até a caixa 2; escolha até 4; digitação até 5
+function grade(it,ok,cap){
+  const r=S.it[it.id], before=r[0];
+  if(ok){ if(r[0]<cap)r[0]++; r[1]=Date.now()+IVL[r[0]]; }
+  else{ r[0]=Math.min(r[0],1); r[1]=Date.now(); }
+  save();
+  if(mode==="daily"&&daily){ daily.log.push({it,ok,before,after:r[0]}); daily.done++; updProg(); }
+  updStats(ok);
+}
+function masteryPct(){return Math.round(100*ITEMS.filter(it=>boxOf(it)>=3).length/TOTAL);}
+function updStats(ok){
+  streak = ok===undefined?streak:(ok?streak+1:0);
+  $("streak").textContent=streak;
+  $("mpct").textContent=masteryPct()+"%";
+  $("mbar").style.width=masteryPct()+"%";
+  updHero();
+}
+function updHero(){
+  $("dueN").textContent=ITEMS.filter(isDue).length;
+  $("dayN").textContent=S.day.streak;
+}
+
+// seleção: vencidos primeiro, depois caixa mais baixa; respostas únicas no tabuleiro
+function pickBoard(pool,n){
+  let cand=[...pool].sort((a,b)=>(isDue(a)?0:1)-(isDue(b)?0:1) || boxOf(a)-boxOf(b) || Math.random()-0.5);
+  const chosen=[],seen=new Set();
+  for(const it of cand){
+    const key=it.answer.toLowerCase();
+    if(seen.has(key))continue;
+    seen.add(key);chosen.push(it);
+    if(chosen.length===n)break;
+  }
+  return chosen;
+}
+let lastSingle=null;
+function pickSingle(pool){
+  let cand=[...pool].sort((a,b)=>(isDue(a)?0:1)-(isDue(b)?0:1) || boxOf(a)-boxOf(b) || Math.random()-0.5);
+  if(cand.length>1&&lastSingle){const f=cand.filter(it=>it.id!==lastSingle);if(f.length)cand=f;}
+  const it=cand[0]; lastSingle=it.id; return it;
+}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+// ============================================================
+// fala (TTS)
+// ============================================================
+function speak(t){
+  if(!('speechSynthesis'in window))return;
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(t);u.lang="en-US";u.rate=.95;
+  const vs=speechSynthesis.getVoices();
+  const en=vs.find(v=>/en[-_]US/i.test(v.lang))||vs.find(v=>/^en/i.test(v.lang));
+  if(en)u.voice=en; speechSynthesis.speak(u);
+}
+if('speechSynthesis'in window) speechSynthesis.getVoices();
+const SPK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>';
+
+// ============================================================
+// helpers de conteúdo
+// ============================================================
+function famLine(it){
+  if(!it.fam||(it.kind!=="vpast"&&it.kind!=="vpart"))return "";
+  const f=FAM[it.fam], idx=it.kind==="vpast"?1:2;
+  const forms=f.members.map(m=>V[m][idx]);
+  return `<div class="famline" style="color:${f.color}">⬢ ${f.label}: ${[...new Set(forms)].join(" · ")}</div>`;
+}
+function gapHTML(s,hint){
+  return s.replace("___",'<span class="gapx">&nbsp;&nbsp;&nbsp;&nbsp;</span>')+(hint?` <span class="hint">${hint}</span>`:"");
+}
+function norm(s){return (s||"").toLowerCase().trim().replace(/[.!?,;:]+$/,"").replace(/[’']/g,"").replace(/\s+/g," ");}
+
+// ============================================================
+// exercício único: pergunta → resposta escrita (todos os itens)
+// ============================================================
+const VERB_INSTR={vpast:"Escreva o PASSADO",vpart:"Escreva o PARTICÍPIO (com have/has)",vpres:"Presente com he/she/it — escreva a forma",vred:"Forma da fala — escreva a reduzida"};
+function typedSpec(it){
+  if(it.pool==="error"){
+    const full=it.sentence.replace(/\[\[(.+?)\]\]/,it.answer);
+    return {instr:"Ache o erro · escreva a forma certa",
+      promptHTML:it.sentence.replace(/\[\[(.+?)\]\]/,'<span class="ebad">$1</span>'),
+      meaning:it.pt,answer:it.answer,full,fullPt:it.pt,why:it.why,placeholder:"escreva a correção…"};
+  }
+  if(it.pool==="scen"){
+    const full=it.s.replace("___",it.answer);
+    return {instr:"Leia a situação e escreva a resposta",pre:`<div class="scen">🎬 ${it.sc}</div>`,
+      promptHTML:gapHTML(it.s),meaning:it.pt,answer:it.answer,full,fullPt:it.pt,why:it.why,placeholder:"escreva a resposta…"};
+  }
+  if(it.pool==="hhh"){
+    const full=it.s.replace("___",it.answer);
+    return {instr:"have, has ou had? Escreva a forma certa",
+      promptHTML:gapHTML(it.s),meaning:it.pt,answer:it.answer,full,fullPt:it.pt,why:it.why,placeholder:"have / has / had"};
+  }
+  if(it.pool==="modals"){
+    const full=it.gap[0].replace("___",it.answer);
+    return {instr:"Complete — escreva o modal certo",
+      promptHTML:gapHTML(it.gap[0]),meaning:it.gap[1],answer:it.answer,full,fullPt:it.gap[1],why:it.use,placeholder:"escreva o modal…"};
+  }
+  // verbos — dentro da frase quando já dominado; senão, flashcard da forma isolada
+  if(verbInSentence(it)){
+    const full=it.gap[0].replace("___",it.answer);
+    return {instr:"Complete a frase — escreva a forma certa",
+      promptHTML:gapHTML(it.gap[0]),meaning:it.gap[1],answer:it.answer,full,fullPt:it.gap[1],why:it.use,fam:famLine(it),placeholder:"escreva a forma…"};
+  }
+  return {instr:VERB_INSTR[it.kind]||"Escreva a forma em inglês",
+    promptHTML:`«${it.cue}»`,
+    answer:it.answer,full:it.ex[0],fullPt:it.ex[1],why:it.use,fam:famLine(it),
+    map:`<div class="sol">“${it.cue}” → <b>${it.answer}</b> <span style="color:var(--soft)">(${it.base})</span></div>`,
+    placeholder:"escreva a forma…"};
+}
+function renderTyped(it,onNext,head){
+  const s=typedSpec(it);
+  $("gamebody").innerHTML=`${head||""}
+    <div class="einstr">${s.instr}</div>
+    ${s.pre||""}
+    <div class="esent">${s.promptHTML}</div>
+    ${s.meaning?`<div class="emean">${s.meaning}</div>`:""}
+    <div class="inrow">
+      <input id="answer" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="${s.placeholder}">
+      <button id="go">⏎</button>
+    </div>
+    <div class="fb" id="fb"></div>
+    <button id="next">Próxima →</button>`;
+  let answered=false;
+  function submit(){
+    if(answered)return;
+    const val=$("answer").value; if(!norm(val))return;
+    answered=true;
+    const ok=norm(val)===norm(s.answer);
+    grade(it,ok,5);
+    $("answer").disabled=true;$("go").disabled=true;
+    speak(s.full);
+    const fb=$("fb");
+    fb.className="fb "+(ok?"ok":"no")+" show";
+    fb.innerHTML=`<div class="verdict">${ok?"✓ CERTO!":"✕ QUASE"}</div>
+      ${ok?"":`<div class="sol">forma certa: <b>${s.answer}</b></div>`}
+      ${s.map||""}
+      <div class="why">${s.why}</div>${s.fam||""}
+      <div class="exline"><button class="spk" id="espk">${SPK}</button>
+        <span class="ex">${s.full}<br><i>${s.fullPt}</i></span></div>`;
+    $("espk").onclick=()=>speak(s.full);
+    $("next").className="show";
+  }
+  $("go").onclick=submit;
+  $("next").onclick=onNext;
+  const a=$("answer");
+  a.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();answered?onNext():submit();}});
+  setTimeout(()=>a.focus(),40);
+}
+
+// ============================================================
+// modos livres (abas)
+// ============================================================
+function startVerbs(){renderTyped(pickSingle(VERB_POOL),startVerbs);}
+function startModals(){renderTyped(pickSingle([...MODAL_POOL,...SCEN_POOL]),startModals);}
+function startHHH(){renderTyped(pickSingle(HHH_POOL),startHHH);}
+function startError(){renderTyped(pickSingle(ERR_POOL),startError);}
+
+// ============================================================
+// treino do dia (interleaving + SRS)
+// ============================================================
+const DAILY_N=20;
+function dailyHead(){
+  const pct=daily?Math.round(100*daily.done/daily.total):0;
+  return `<div class="prog"><span id="pgTxt">${daily.done}/${daily.total}</span><div class="bar"><i id="pgBar" style="width:${pct}%"></i></div><span>treino do dia</span></div>`;
+}
+function updProg(){
+  if(!daily)return;
+  const t=$("pgTxt"),b=$("pgBar");
+  if(t)t.textContent=daily.done+"/"+daily.total;
+  if(b)b.style.width=Math.round(100*daily.done/daily.total)+"%";
+}
+function startDaily(){
+  const byBox=(a,b)=>boxOf(a)-boxOf(b)||Math.random()-0.5;
+  let sel=ITEMS.filter(isDue).sort(byBox).slice(0,DAILY_N);
+  if(sel.length<DAILY_N){
+    const ids=new Set(sel.map(it=>it.id));
+    const rest=ITEMS.filter(it=>!ids.has(it.id)).sort(byBox);
+    sel=sel.concat(rest.slice(0,DAILY_N-sel.length));
+  }
+  daily={steps:shuffle(sel.map(it=>({it}))),idx:0,done:0,total:sel.length,log:[]};
+  setMode("daily");
+}
+function nextDailyStep(){
+  const d=daily;
+  if(!d)return;
+  if(d.idx>=d.steps.length)return dailySummary();
+  renderTyped(d.steps[d.idx++].it,nextDailyStep,dailyHead());
+}
+function dailySummary(){
+  const d=daily;
+  const okN=d.log.filter(l=>l.ok).length;
+  const ups=[...new Map(d.log.filter(l=>l.after>l.before).map(l=>[l.it.id,l.it])).values()];
+  const downs=[...new Map(d.log.filter(l=>l.after<l.before).map(l=>[l.it.id,l.it])).values()];
+  // streak diário
+  const today=new Date().toISOString().slice(0,10);
+  if(S.day.last!==today){
+    const y=new Date(Date.now()-864e5).toISOString().slice(0,10);
+    S.day.streak=(S.day.last===y)?S.day.streak+1:1;
+    S.day.last=today; save();
+  }
+  updHero();
+  $("gamebody").innerHTML=`<div class="sum">
+    <div class="big">Treino completo! 🎉</div>
+    <div class="score">${okN} de ${d.log.length} certos</div>
+    <div class="day">🔥 ${S.day.streak} dia(s) seguidos de treino</div>
+    ${ups.length?`<h4>subiram de nível</h4><div class="sumchips">${ups.map(it=>`<span class="sumchip up">${it.answer}</span>`).join("")}</div>`:""}
+    ${downs.length?`<h4>voltaram pra revisão</h4><div class="sumchips">${downs.map(it=>`<span class="sumchip dn">${it.answer}</span>`).join("")}</div>`:""}
+    <button class="nextBoard" id="again">Treinar mais →</button>
+    <button class="nextBoard" id="back" style="background:var(--ink);margin-top:8px">Voltar aos modos</button>
+  </div>`;
+  $("again").onclick=startDaily;
+  $("back").onclick=()=>setMode("verbs");
+  daily=null;
+}
+
+// ============================================================
+// álbum de famílias
+// ============================================================
+function openAlbum(){
+  let done=0;
+  let html="";
+  for(const f in FAM){
+    const fam=FAM[f];
+    const chips=fam.members.map(k=>{
+      const mb=Math.min(S.it[k+"-past"][0],S.it[k+"-part"][0]);
+      if(mb>=4)done++;
+      const cls=mb>=4?"done":mb>=2?"mid":"";
+      const icon=mb>=4?"✓ ":mb>=2?"● ":"○ ";
+      return `<span class="chip ${cls}">${icon}${k} — <b>${V[k][1]} · ${V[k][2]}</b></span>`;
+    }).join("");
+    html+=`<div class="albfam">
+      <h3><span class="dot" style="background:${fam.color}"></span>${fam.label}</h3>
+      <div class="tip">${fam.tip}</div>
+      <div class="chips">${chips}</div></div>`;
+  }
+  $("albSub").textContent=`${done} de 20 verbos dominados (✓ = passado e particípio na caixa alta)`;
+  $("albBody").innerHTML=html;
+  $("album").classList.add("show");
+}
+$("albBtn").onclick=openAlbum;
+$("albClose").onclick=()=>$("album").classList.remove("show");
+$("album").addEventListener("click",e=>{if(e.target===$("album"))$("album").classList.remove("show");});
+
+// ============================================================
+// card de ajuda — explica cada palavra e quando usar, por classe
+// ============================================================
+const HELP_VERB={
+ go:"Passado went (nunca “goed”). O particípio gone só aparece com have/has/had.",
+ let:"Invariável: let / let / let — nunca “letted”. Só o contexto mostra o tempo. lemme = let me.",
+ get:"Particípio americano é gotten (I've gotten). gotta = got to = “tenho que”.",
+ need:"Regular (+ed). Quase sempre vem com to + verbo: need to → needa.",
+ keep:"kept / kept. Para “continuar fazendo algo”, use keep + -ing: keep trying.",
+ move:"Regular (+ed). Serve pra mudar de casa (move to) e pra mover algo de lugar.",
+ give:"gave / given. gimme = give me.",
+ feel:"felt / felt (nunca “feeled”). feel like + -ing = estar a fim de.",
+ run:"Passado ran, mas o particípio volta a run (I've run). run out of = ficar sem.",
+ come:"Passado came, particípio volta a come (has come). c'mon = come on (anda!).",
+ call:"Regular (+ed). call back = retornar a ligação; call off = cancelar.",
+ know:"knew / known (nunca “knowed”). knew soa “niú”.",
+ take:"took / taken — não confunda (nunca “I have took”). take off = decolar/tirar.",
+ make:"made / made (nunca “maked”). make = criar/produzir (≠ do).",
+ look:"Regular, mas muda de sentido com preposição: look for = procurar; look after = cuidar de; look into = investigar.",
+ want:"Regular (+ed). wanna = want to, mas com he/she é wants to (nunca “he wanna”).",
+ think:"thought / thought (soa “thót”; nunca “thinked”).",
+ say:"said / said (soa “sed”; says soa “sez”). say = dizer algo; tell = contar a alguém.",
+ chill:"Gíria informal — evite em textos formais. chill out = se acalmar.",
+ work:"Regular (+ed), com dois sentidos: trabalhar e funcionar (“It works!”)."
+};
+const HELP_AUX=[
+ {w:"be",tr:"ser / estar",forms:"pres am · is · are | pass was · were | part been",
+  tip:"Monta os tempos contínuos (be + verbo-ing) e a voz passiva (be + particípio). É o único auxiliar que NÃO usa do/does/did — ele mesmo vira a pergunta e a negativa.",
+  ex:["Are you working right now? · The house was built in 1990.","Você está trabalhando agora? · A casa foi construída em 1990."]},
+ {w:"have",tr:"auxiliar dos tempos perfect",forms:"pres have · has | pass had | part had",
+  tip:"Forma os tempos perfect (have + particípio) = já aconteceu e ainda importa. No passado vira had. Cuidado: have também é verbo principal (= ter) e aí usa do (“Do you have a car?”).",
+  ex:["I have finished. · She had already left when I arrived.","Eu terminei. · Ela já tinha saído quando cheguei."]},
+ {w:"do",tr:"auxiliar de pergunta e negativa",forms:"pres do · does | pass did | part done",
+  tip:"Auxiliar de pergunta e negativa no presente e passado simples. Depois de do/does/did o verbo fica na base (nunca “did you went”). Também dá ênfase: “I do like it!”.",
+  ex:["Do you like coffee? · She doesn't live here. · Did you go?","Você gosta de café? · Ela não mora aqui. · Você foi?"]}
+];
+const HELP_HHH=[
+ {w:"have",tr:"I · you · we · they",forms:"todos os sujeitos, menos he/she/it",
+  tip:"Use have com I, you, we, they e sujeitos no plural. Sempre seguido do particípio.",
+  ex:["I have finished the report. · They have known each other for years.","Terminei o relatório. · Eles se conhecem há anos."]},
+ {w:"has",tr:"he · she · it",forms:"só a 3ª pessoa do singular",
+  tip:"Só he, she, it (e nomes no singular) usam has. É o erro nº 1 do brasileiro — “she have” está sempre errado.",
+  ex:["She has left already. · The coffee has run out.","Ela já saiu. · O café acabou."]},
+ {w:"had",tr:"passado — qualquer sujeito",forms:"vale pra todos os sujeitos",
+  tip:"Passado de have/has. Marca uma ação que aconteceu ANTES de outra ação no passado (past perfect).",
+  ex:["She had already left when I arrived.","Ela já tinha saído quando cheguei."]},
+ {w:"have to / has to",tr:"obrigação (= precisar)",forms:"have to · has to (he/she/it)",
+  tip:"= precisar / ser obrigado. Com he/she/it vira has to. Na negativa, don't/doesn't have to = não precisa.",
+  ex:["I have to go now. · He has to work on Saturdays.","Tenho que ir agora. · Ele tem que trabalhar aos sábados."]}
+];
+const HELP_CLASSES=[
+ {key:"verbos",label:"Verbos",sub:"Os 20 verbos mais frequentes — sentido e todas as formas"},
+ {key:"modais",label:"Modais",sub:"Cada modal tem seu próprio sentido — depois dele, verbo na base"},
+ {key:"aux",label:"Auxiliares",sub:"be · have · do — os três “verbos de apoio” do inglês"},
+ {key:"hhh",label:"have · has · had",sub:"Qual forma usar com cada sujeito"}
+];
+function helpItemHTML(w,tr,forms,tip,ex){
+  const exHTML = ex ? `<div class="hex"><button class="spk" data-say="${ex[0].replace(/"/g,'&quot;')}">${SPK}</button><span>${ex[0]}<br>${ex[1]}</span></div>` : "";
+  return `<div class="helpitem">
+    <div class="hw">${w}${tr?` <span class="tr">— ${tr}</span>`:""}</div>
+    ${forms?`<div class="forms">${forms}</div>`:""}
+    ${tip?`<div class="htip">${tip}</div>`:""}
+    ${exHTML}</div>`;
+}
+function helpContent(key){
+  if(key==="verbos"){
+    return Object.keys(V).map(k=>{
+      const d=V[k];
+      const forms=`pres <b>${k} / ${pres3(k)}</b> · pass <b>${d[1]}</b> · part <b>${d[2]}</b> · fut <b>will / gonna ${k}</b>${d[3]?` · fala <b>${d[3]}</b>`:""}`;
+      return helpItemHTML(k,d[0],forms,HELP_VERB[k],d[5]);
+    }).join("");
+  }
+  if(key==="modais") return MODAL_DEFS.map(m=>helpItemHTML(m.answer,m.cue,"",m.use,m.ex)).join("");
+  if(key==="aux")    return HELP_AUX.map(a=>helpItemHTML(a.w,a.tr,a.forms,a.tip,a.ex)).join("");
+  if(key==="hhh")    return HELP_HHH.map(a=>helpItemHTML(a.w,a.tr,a.forms,a.tip,a.ex)).join("");
+  return "";
+}
+let helpCls="verbos";
+function openHelp(cls){
+  helpCls=cls||helpCls;
+  const nav=$("helpNav");
+  nav.innerHTML=HELP_CLASSES.map(c=>`<button class="hchip${c.key===helpCls?" on":""}" data-c="${c.key}">${c.label}</button>`).join("");
+  nav.querySelectorAll(".hchip").forEach(b=>b.onclick=()=>openHelp(b.dataset.c));
+  const meta=HELP_CLASSES.find(c=>c.key===helpCls)||{};
+  $("helpSub").textContent=meta.sub||"";
+  const body=$("helpBody");
+  body.innerHTML=helpContent(helpCls);
+  body.querySelectorAll(".spk").forEach(btn=>btn.onclick=()=>speak(btn.dataset.say));
+  $("help").classList.add("show");
+}
+const MODE2CLS={verbs:"verbos",modals:"modais",hhh:"hhh"};
+$("helpBtn").onclick=()=>openHelp(MODE2CLS[mode]||"verbos");
+$("helpClose").onclick=()=>$("help").classList.remove("show");
+$("help").addEventListener("click",e=>{if(e.target===$("help"))$("help").classList.remove("show");});
+
+// ============================================================
+// abas / modos
+// ============================================================
+function setMode(m){
+  mode=m;
+  const map={verbs:"tab-verbs",modals:"tab-modals",hhh:"tab-hhh",error:"tab-error"};
+  for(const k in map)$(map[k]).className="tab"+(m===k?" on-"+k:"");
+  const rib=$("ribbon"),rl=$("rlabel");
+  if(m==="verbs"){rib.className="ribbon verbs";rl.textContent="Verbos · escreva a forma";startVerbs();}
+  else if(m==="modals"){rib.className="ribbon modals";rl.textContent="Modais · escreva a resposta";startModals();}
+  else if(m==="hhh"){rib.className="ribbon hhh";rl.textContent="have · has · had";startHHH();}
+  else if(m==="error"){rib.className="ribbon error";rl.textContent="Caça ao erro";startError();}
+  else if(m==="daily"){rib.className="ribbon daily";rl.textContent="▶ Treino do dia";nextDailyStep();}
+  const rh=$("ribHelp");
+  if(MODE2CLS[m]){rh.classList.remove("hide");rh.onclick=()=>openHelp(MODE2CLS[m]);}
+  else rh.classList.add("hide");
+  updHero();
+}
+$("tab-verbs").onclick=()=>setMode("verbs");
+$("tab-modals").onclick=()=>setMode("modals");
+$("tab-hhh").onclick=()=>setMode("hhh");
+$("tab-error").onclick=()=>setMode("error");
+$("heroBtn").onclick=startDaily;
+$("resetBtn").onclick=()=>{
+  if(confirm("Zerar todo o progresso salvo? Isso não tem volta.")){
+    localStorage.removeItem(KEY); location.reload();
+  }
+};
+
+updStats();
+setMode("verbs");
+</script>
+</body>
+</html>
