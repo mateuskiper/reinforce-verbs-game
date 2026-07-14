@@ -241,6 +241,21 @@
   .helpitem .hex .spk svg{width:12px;height:12px}
   .helpitem .hex span{font-family:'Inter';font-size:12.5px;color:var(--soft);font-style:italic;line-height:1.35}
 
+  /* ===== card de stats ===== */
+  .strows{margin-top:6px}
+  .strow{display:flex;align-items:center;gap:10px;border-top:1px solid #eadfce;padding:9px 2px}
+  .strows .strow:first-child{border-top:none}
+  .strow.dim{opacity:.45}
+  .strow .sw{flex:1;min-width:0}
+  .strow .sw b{font-family:'Space Mono',monospace;font-size:13.5px;color:var(--corald);display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .strow .sw small{font-family:'Inter';font-size:11px;color:var(--soft);display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .stlvl{display:flex;gap:3px;flex-shrink:0}
+  .stlvl i{width:9px;height:9px;border-radius:3px;background:#e6dcc9}
+  .stlvl i.on{background:var(--teal)}
+  .stnums{flex-shrink:0;text-align:right;font-family:'Space Mono',monospace;font-size:11px;line-height:1.5;color:#5a5270;white-space:nowrap}
+  .stnums .ok{color:#237a52;font-weight:700}
+  .stnums .no{color:var(--corald);font-weight:700}
+
   .foot{margin-top:14px;font-family:'Space Mono',monospace;font-size:10.5px;color:#6f6785;text-align:center;line-height:1.7}
   .foot a{color:#8a8398;text-decoration:underline;cursor:pointer}
 
@@ -284,7 +299,8 @@
     <div class="stat">🎯 <b id="mpct">0%</b></div>
     <div class="stat"><span class="flame">🔥</span><b id="streak">0</b></div>
     <button class="stat" id="albBtn" title="Álbum de famílias de verbos">🃏 famílias</button>
-    <button class="stat" id="helpBtn" title="Ajuda — como e quando usar cada palavra">❓ ajuda</button>
+    <button class="stat" id="helpBtn" title="Ajuda — como e quando usar cada palavra">🛟 ajuda</button>
+    <button class="stat" id="statsBtn" title="Stats — progresso, acertos e erros por palavra">📊 stats</button>
     <button class="stat" id="syncBtn" title="Sincronizar progresso entre aparelhos">🔄 sync</button>
   </div>
 
@@ -300,7 +316,7 @@
   </div>
 
   <div class="card">
-    <div class="ribbon" id="ribbon"><span id="rlabel"></span><button class="ribhelp hide" id="ribHelp" title="Ajuda desta seção">❓ ajuda</button></div>
+    <div class="ribbon" id="ribbon"><span id="rlabel"></span><button class="ribhelp hide" id="ribHelp" title="Ajuda desta seção">🛟 ajuda</button></div>
     <div class="body" id="gamebody"></div>
   </div>
 
@@ -329,6 +345,17 @@
     </div>
     <div class="helpnav" id="helpNav"></div>
     <div id="helpBody"></div>
+  </div>
+</div>
+
+<div class="album" id="statsM">
+  <div class="albcard">
+    <div class="albhead">
+      <div class="albtitle"><h2>Stats — seu progresso</h2><div class="albsub" id="statsSub"></div></div>
+      <button class="albclose" id="statsClose" aria-label="Fechar">✕</button>
+    </div>
+    <div class="helpnav" id="statsNav"></div>
+    <div id="statsBody"></div>
   </div>
 </div>
 
@@ -1046,6 +1073,86 @@ const MODE2CLS={verbs:"verbos",modals:"modais",hhh:"hhh"};
 $("helpBtn").onclick=()=>openHelp(MODE2CLS[mode]||"verbos");
 $("helpClose").onclick=()=>$("help").classList.remove("show");
 $("help").addEventListener("click",e=>{if(e.target===$("help"))$("help").classList.remove("show");});
+
+// ============================================================
+// card de stats — progresso, acertos, erros e tentativas por palavra
+// ============================================================
+const STATS_CLASSES=[
+ {key:"verbs",label:"Verbos"},
+ {key:"modals",label:"Modais"},
+ {key:"hhh",label:"have · has · had"},
+ {key:"error",label:"Caça ao erro"}
+];
+const HHH_SUB={have:"I · you · we · they",has:"he · she · it",had:"passado — qualquer sujeito","hasn't":"negativa de has"};
+// agrega os itens da classe por palavra (verbos pelo verbo-base; o resto pela resposta)
+function statsGroups(key){
+  let pool,keyOf,subOf;
+  if(key==="verbs"){ pool=VERB_POOL; keyOf=it=>it.base; subOf=(k,its)=>V[k][0]; }
+  else if(key==="modals"){ pool=[...MODAL_POOL,...SCEN_POOL]; keyOf=it=>it.answer.toLowerCase();
+    subOf=(k,its)=>{const m=MODAL_DEFS.find(d=>d.answer.toLowerCase()===k); return m?m.cue:its.length+" situação(ões)";}; }
+  else if(key==="hhh"){ pool=HHH_POOL; keyOf=it=>it.answer.toLowerCase(); subOf=k=>HHH_SUB[k]||""; }
+  else { pool=ERR_POOL; keyOf=it=>it.answer.toLowerCase(); subOf=(k,its)=>its.length+" frase(s)"; }
+  const map=new Map();
+  pool.forEach(it=>{const k=keyOf(it); if(!map.has(k))map.set(k,[]); map.get(k).push(it);});
+  const rows=[...map].map(([k,its])=>{
+    let n=0,errs=0,box=0;
+    its.forEach(it=>{const r=S.it[it.id]; n+=r[2]||0; errs+=r[3]||0; box+=r[0];});
+    return {k,sub:subOf(k,its),n,errs,hits:n-errs,lvl:box/its.length};
+  });
+  // palavras com maior taxa de erro primeiro; nunca treinadas por último
+  rows.sort((a,b)=>(b.n?b.errs/b.n:-1)-(a.n?a.errs/a.n:-1) || b.n-a.n || a.k.localeCompare(b.k));
+  return rows;
+}
+function statsRowHTML(g){
+  const lvl=Math.round(g.lvl);
+  const dots=[1,2,3,4,5].map(i=>`<i${i<=lvl?' class="on"':""}></i>`).join("");
+  const nums=g.n
+    ? `<span class="ok">✓${g.hits}</span> <span class="no">✕${g.errs}</span><br>${g.n} tent. · ${Math.round(100*g.hits/g.n)}%`
+    : "ainda não<br>treinada";
+  return `<div class="strow${g.n?"":" dim"}">
+    <div class="sw"><b>${g.k}</b><small>${g.sub}</small></div>
+    <div class="stlvl" title="nível ${lvl} de 5 (caixa SRS)">${dots}</div>
+    <div class="stnums">${nums}</div>
+  </div>`;
+}
+let statsCls="verbs", statsSrc="local", statsBusy=false;
+function renderStats(){
+  const nav=$("statsNav");
+  nav.innerHTML=STATS_CLASSES.map(c=>`<button class="hchip${c.key===statsCls?" on":""}" data-c="${c.key}">${c.label}</button>`).join("");
+  nav.querySelectorAll(".hchip").forEach(b=>b.onclick=()=>{statsCls=b.dataset.c;renderStats();});
+  let totN=0,totErr=0;
+  ITEMS.forEach(it=>{const r=S.it[it.id]; totN+=r[2]||0; totErr+=r[3]||0;});
+  const acc=totN?Math.round(100*(totN-totErr)/totN):0;
+  const src=statsSrc==="sheet"?"planilha sincronizada ✓":statsSrc==="checando"?"consultando planilha…":"este navegador";
+  $("statsSub").textContent=`${totN} tentativas · ${totN-totErr} acertos (${acc}%) · mais erradas primeiro · fonte: ${src}`;
+  $("statsBody").innerHTML=`<div class="strows">${statsGroups(statsCls).map(statsRowHTML).join("")}</div>`;
+}
+// se conectado ao Google, lê a planilha e adota o estado de lá se for mais novo
+async function statsSyncCheck(){
+  if(statsBusy) return;
+  if(!gReady() || !gToken || Date.now()>=gTokenExp){ statsSrc="local"; return; }
+  statsBusy=true; statsSrc="checando"; renderStats();
+  try{
+    const remote=await gReadState();
+    if(remote && remote.it && (remote.updatedAt||0)>(S.updatedAt||0)){
+      S=sanitizeState(remote);               // mesma regra do gSync: célula é editável, sanear sempre
+      try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}
+      updStats(); setMode(mode);
+    }
+    statsSrc="sheet";
+  }catch(e){ statsSrc="local"; }
+  statsBusy=false;
+  if($("statsM").classList.contains("show")) renderStats();
+}
+function openStats(cls){
+  if(cls) statsCls=cls;
+  renderStats();
+  $("statsM").classList.add("show");
+  statsSyncCheck();
+}
+$("statsBtn").onclick=()=>openStats(["verbs","modals","hhh","error"].includes(mode)?mode:"verbs");
+$("statsClose").onclick=()=>$("statsM").classList.remove("show");
+$("statsM").addEventListener("click",e=>{if(e.target===$("statsM"))$("statsM").classList.remove("show");});
 
 // painel de sync
 function renderSyncPanel(){
