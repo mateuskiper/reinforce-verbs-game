@@ -3,10 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<!-- CSP via meta (GitHub Pages não permite headers HTTP). Limita de onde scripts podem
+     vir e PARA ONDE a página pode falar (connect-src) — barreira contra exfiltração do token. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline' https://accounts.google.com; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src https://www.googleapis.com https://sheets.googleapis.com https://accounts.google.com https://oauth2.googleapis.com; frame-src https://accounts.google.com; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
 <title>Na Ponta da Língua · Treino de Verbos e Modais em Inglês</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;900&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
   :root{
     --bg:#141019; --bg2:#1d1727; --paper:#f8f4ec; --ink:#211b2e; --soft:#8a8398;
@@ -204,6 +209,13 @@
   .chip.mid{background:#fbf3df;border-color:#e8d6a8}
   .chip.done{background:#e9f6ef;border-color:#9fdcbd}
 
+  /* painel de sync */
+  .syncbox{margin-top:16px;border:1px solid #eadfce;border-radius:12px;padding:12px 13px;background:#fbf7ef}
+  .synclab{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--teal);margin-bottom:8px}
+  .syncrow{display:flex;gap:8px;align-items:center}
+  .syncrow .chip{cursor:pointer;font-weight:700;padding:9px 12px;white-space:nowrap}
+  .synctip{font-family:'Inter';font-size:12px;color:var(--soft);margin-top:8px;line-height:1.4}
+
   /* botão de ajuda no ribbon */
   .ribhelp{margin-left:auto;font-family:'Inter';font-weight:700;font-size:11px;color:#fff;
     background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.4);border-radius:99px;
@@ -273,6 +285,7 @@
     <div class="stat"><span class="flame">🔥</span><b id="streak">0</b></div>
     <button class="stat" id="albBtn" title="Álbum de famílias de verbos">🃏 famílias</button>
     <button class="stat" id="helpBtn" title="Ajuda — como e quando usar cada palavra">❓ ajuda</button>
+    <button class="stat" id="syncBtn" title="Sincronizar progresso entre aparelhos">🔄 sync</button>
   </div>
 
   <button class="hero" id="heroBtn">▶ Treino do dia
@@ -316,6 +329,21 @@
     </div>
     <div class="helpnav" id="helpNav"></div>
     <div id="helpBody"></div>
+  </div>
+</div>
+
+<div class="album" id="sync">
+  <div class="albcard">
+    <div class="albhead">
+      <div class="albtitle"><h2>Sincronizar</h2><div class="albsub">Backup e sincronização do seu progresso entre aparelhos</div></div>
+      <button class="albclose" id="syncClose" aria-label="Fechar">✕</button>
+    </div>
+    <div class="syncbox">
+      <div class="synclab">Sua conta Google</div>
+      <div class="syncrow"><button class="chip" id="gConnect">conectar com Google</button><button class="chip" id="gDisc" style="display:none">desconectar</button></div>
+      <div class="synctip">Seu progresso fica numa planilha no <b>seu próprio</b> Google Drive («jogo-verbos-progresso»). Nada é compartilhado, e funciona em qualquer aparelho com a mesma conta.</div>
+    </div>
+    <div class="synctip" id="syncStat" style="margin-top:12px;font-weight:700"></div>
   </div>
 </div>
 
@@ -538,13 +566,123 @@ const TOTAL=ITEMS.length;
 // ============================================================
 const KEY="jogo-verbos-v2";
 const IVL=[0, 10*60e3, 864e5, 3*864e5, 7*864e5, 21*864e5]; // caixa 0..5 → próximo due
-let S={it:{},day:{last:"",streak:0}};
-try{
-  const raw=JSON.parse(localStorage.getItem(KEY));
-  if(raw&&raw.it){S.it=raw.it; if(raw.day)S.day=raw.day;}
-}catch(e){}
-ITEMS.forEach(it=>{ if(!Array.isArray(S.it[it.id])) S.it[it.id]=[0,0]; });
-function save(){ try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){} }
+
+// sync por-usuário via "Entrar com Google" → planilha no Drive do próprio usuário
+const GOOGLE_CLIENT_ID="566375171434-2iadlbnhltes2iekpepl4kf77c9r08vh.apps.googleusercontent.com";   // colar o OAuth Client ID (…apps.googleusercontent.com); vazio = desligado
+const GDRIVE_SCOPE="https://www.googleapis.com/auth/drive.file"; // menor privilégio: só arquivos do app
+const GSHEET_NAME="jogo-verbos-progresso";
+
+// saneamento: o save pode vir de fora (nuvem, planilha editada, outra página na
+// MESMA origem github.io) — nunca confiar no shape. Reconstrói o estado do zero
+// só com ids conhecidos e números validados; strings nunca chegam ao DOM.
+// Também faz a migração aditiva [box,due] → [box,due,n,errs] de saves antigos.
+function sanitizeState(raw){
+  const out={it:{},day:{last:"",streak:0}};
+  if(!raw||typeof raw!=="object") raw={};
+  const now=Date.now(), MAX_DUE=now+366*864e5;
+  const num=(v,lo,hi)=>{v=Math.trunc(+v); return Number.isFinite(v)?Math.min(hi,Math.max(lo,v)):lo;};
+  const src=(raw.it&&typeof raw.it==="object")?raw.it:{};
+  ITEMS.forEach(it=>{
+    const r=Array.isArray(src[it.id])?src[it.id]:[];
+    const n=num(r[2],0,1e6);
+    out.it[it.id]=[num(r[0],0,5), num(r[1],0,MAX_DUE), n, Math.min(num(r[3],0,1e6),n)];
+  });
+  if(raw.day&&typeof raw.day==="object"){
+    if(typeof raw.day.last==="string"&&/^\d{4}-\d{2}-\d{2}$/.test(raw.day.last)) out.day.last=raw.day.last;
+    out.day.streak=num(raw.day.streak,0,1e5);
+  }
+  if(raw.updatedAt) out.updatedAt=num(raw.updatedAt,0,now); // timestamp do futuro nunca vence o merge
+  return out;
+}
+let S;
+try{ S=sanitizeState(JSON.parse(localStorage.getItem(KEY))); }
+catch(e){ S=sanitizeState(null); }
+function save(){ try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){} gPush(); }
+
+let syncStatus="";
+function setSyncStatus(t){ syncStatus=t; const el=$("syncStat"); if(el)el.textContent=t; }
+
+// ---- sync por-usuário: OAuth drive.file (GIS) + planilha própria no Drive (offline-first) ----
+let gTokenClient=null, gToken="", gTokenExp=0, gSheetId=null, gPushT=null, gResolve=null, gReject=null;
+function gReady(){ return !!(GOOGLE_CLIENT_ID && window.google && google.accounts && google.accounts.oauth2); }
+function gInit(){
+  if(gTokenClient || !gReady()) return;
+  gTokenClient=google.accounts.oauth2.initTokenClient({
+    client_id:GOOGLE_CLIENT_ID, scope:GDRIVE_SCOPE,
+    callback:(resp)=>{ const ok=resp&&resp.access_token;
+      if(ok){ gToken=resp.access_token; gTokenExp=Date.now()+((resp.expires_in||3600)*1000)-60000; }
+      if(gResolve&&ok) gResolve(gToken); else if(gReject&&!ok) gReject((resp&&resp.error)||"sem token");
+      gResolve=gReject=null; },
+    error_callback:(err)=>{ if(gReject) gReject((err&&err.type)||"erro"); gResolve=gReject=null; }
+  });
+}
+function gEnsureToken(){
+  if(gToken && Date.now()<gTokenExp) return Promise.resolve(gToken);
+  gInit();
+  if(!gTokenClient) return Promise.reject("google indisponível");
+  return new Promise((res,rej)=>{ gResolve=res; gReject=rej;
+    gTokenClient.requestAccessToken({prompt:""}); }); // '' = silencioso se já consentiu, senão pede consentimento
+}
+async function gFetch(url,opts){
+  const t=await gEnsureToken();
+  opts=opts||{}; opts.headers=Object.assign({Authorization:"Bearer "+t},opts.headers||{});
+  let r=await fetch(url,opts);
+  if(r.status===401){ gToken=""; const t2=await gEnsureToken();  // token expirou → renova e tenta 1x
+    opts.headers.Authorization="Bearer "+t2; r=await fetch(url,opts); }
+  return r;
+}
+async function gFindOrCreateSheet(){
+  if(gSheetId) return gSheetId;
+  const q=encodeURIComponent(`name='${GSHEET_NAME}' and mimeType='application/vnd.google-apps.spreadsheet' and trashed=false`);
+  let r=await gFetch(`https://www.googleapis.com/drive/v3/files?q=${q}&spaces=drive&fields=files(id,name)`);
+  let j=await r.json();
+  if(j.files&&j.files.length){ gSheetId=j.files[0].id; return gSheetId; }
+  r=await gFetch("https://sheets.googleapis.com/v4/spreadsheets",{method:"POST",
+    headers:{"Content-Type":"application/json"}, body:JSON.stringify({properties:{title:GSHEET_NAME}})});
+  j=await r.json(); gSheetId=j.spreadsheetId; return gSheetId;
+}
+async function gReadState(){
+  const id=await gFindOrCreateSheet();
+  const r=await gFetch(`https://sheets.googleapis.com/v4/spreadsheets/${id}/values/A1`);
+  const j=await r.json(); const cell=j.values&&j.values[0]&&j.values[0][0];
+  if(!cell) return null; try{ return JSON.parse(cell); }catch(e){ return null; }
+}
+async function gWriteState(){
+  const id=await gFindOrCreateSheet();
+  S.updatedAt=Date.now(); try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}
+  await gFetch(`https://sheets.googleapis.com/v4/spreadsheets/${id}/values/A1?valueInputOption=RAW`,
+    {method:"PUT",headers:{"Content-Type":"application/json"}, body:JSON.stringify({values:[[JSON.stringify(S)]]})});
+}
+async function gSync(){                      // conectar/sincronizar (deve ser chamado por clique = gesto do usuário)
+  if(!gReady()){ setSyncStatus(GOOGLE_CLIENT_ID?"carregando Google… tente de novo":"defina GOOGLE_CLIENT_ID no código"); return; }
+  try{
+    setSyncStatus("conectando ao Google…");
+    await gEnsureToken();
+    setSyncStatus("sincronizando…");
+    const remote=await gReadState();          // last-write-wins por updatedAt
+    if(remote && remote.it && (!S.updatedAt || (remote.updatedAt||0)>S.updatedAt)){
+      S=sanitizeState(remote);               // mesmo vindo da SUA planilha: célula é editável
+      try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}
+      updStats(); setMode(mode);
+    }
+    await gWriteState();                       // empurra o estado mais novo
+    localStorage.setItem("jv-gconnected","1");
+    setSyncStatus("conectado ✓ progresso na sua conta Google");
+  }catch(e){ setSyncStatus("falha ao conectar: "+(e&&e.message||e)); }
+  renderSyncPanel();
+}
+function gPush(){                             // só sincroniza em background se já houver token vivo (evita popup surpresa)
+  if(!gReady() || !gToken || Date.now()>=gTokenExp) return;
+  clearTimeout(gPushT);
+  gPushT=setTimeout(()=>{ gWriteState()
+    .then(()=>setSyncStatus("salvo no Google ✓"))
+    .catch(()=>setSyncStatus("offline — salvo só aqui")); },2500);
+}
+function gDisconnect(){
+  if(gToken && window.google) try{ google.accounts.oauth2.revoke(gToken,()=>{});}catch(e){}
+  gToken=""; gTokenExp=0; gSheetId=null; localStorage.removeItem("jv-gconnected");
+  setSyncStatus("desconectado"); renderSyncPanel();
+}
 function boxOf(it){return S.it[it.id][0];}
 function isDue(it){return S.it[it.id][1]<=Date.now();}
 
@@ -557,6 +695,8 @@ const $=id=>document.getElementById(id);
 // cap: pares sobem no máx. até a caixa 2; escolha até 4; digitação até 5
 function grade(it,ok,cap){
   const r=S.it[it.id], before=r[0];
+  r[2]=(r[2]||0)+1;              // tentativa (n)
+  if(!ok) r[3]=(r[3]||0)+1;     // erro (errs)
   if(ok){ if(r[0]<cap)r[0]++; r[1]=Date.now()+IVL[r[0]]; }
   else{ r[0]=Math.min(r[0],1); r[1]=Date.now(); }
   save();
@@ -576,9 +716,22 @@ function updHero(){
   $("dayN").textContent=S.day.streak;
 }
 
-// seleção: vencidos primeiro, depois caixa mais baixa; respostas únicas no tabuleiro
+// seleção por UCB1: prioriza o que erra mais (exploração) + itens pouco vistos (exploração)
+// score = taxa de erro (errs/n) + c·√(ln N / n); item inédito (n=0) → ∞ (entra primeiro)
+const UCB_C=Math.SQRT2;         // ↑ = mais exploração; ↓ = mais foco no difícil
+function ucbScore(it,N){
+  const r=S.it[it.id], n=r[2]||0;
+  if(n===0) return Infinity;
+  const err=(r[3]||0)/n;
+  return err + UCB_C*Math.sqrt(Math.log(Math.max(N,1))/n);
+}
+function rankByUCB(pool){
+  const N=ITEMS.reduce((s,x)=>s+(S.it[x.id][2]||0),0);
+  return [...pool].sort((a,b)=>ucbScore(b,N)-ucbScore(a,N) || Math.random()-0.5);
+}
+// respostas únicas no tabuleiro, ranqueadas por UCB
 function pickBoard(pool,n){
-  let cand=[...pool].sort((a,b)=>(isDue(a)?0:1)-(isDue(b)?0:1) || boxOf(a)-boxOf(b) || Math.random()-0.5);
+  let cand=rankByUCB(pool);
   const chosen=[],seen=new Set();
   for(const it of cand){
     const key=it.answer.toLowerCase();
@@ -590,7 +743,7 @@ function pickBoard(pool,n){
 }
 let lastSingle=null;
 function pickSingle(pool){
-  let cand=[...pool].sort((a,b)=>(isDue(a)?0:1)-(isDue(b)?0:1) || boxOf(a)-boxOf(b) || Math.random()-0.5);
+  let cand=rankByUCB(pool);
   if(cand.length>1&&lastSingle){const f=cand.filter(it=>it.id!==lastSingle);if(f.length)cand=f;}
   const it=cand[0]; lastSingle=it.id; return it;
 }
@@ -701,6 +854,14 @@ function renderTyped(it,onNext,head){
   a.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();answered?onNext():submit();}});
   setTimeout(()=>a.focus(),40);
 }
+// atalho global: Enter aciona o "Próxima" quando visível (depois de responder,
+// o input fica desabilitado e perde o foco — sem isso o Enter morre no body).
+// e.defaultPrevented evita duplo avanço quando o keydown do input já tratou o Enter.
+document.addEventListener("keydown",e=>{
+  if(e.key!=="Enter"||e.defaultPrevented)return;
+  const n=$("next");
+  if(n&&n.classList.contains("show")){e.preventDefault();n.click();}
+});
 
 // ============================================================
 // modos livres (abas)
@@ -725,13 +886,8 @@ function updProg(){
   if(b)b.style.width=Math.round(100*daily.done/daily.total)+"%";
 }
 function startDaily(){
-  const byBox=(a,b)=>boxOf(a)-boxOf(b)||Math.random()-0.5;
-  let sel=ITEMS.filter(isDue).sort(byBox).slice(0,DAILY_N);
-  if(sel.length<DAILY_N){
-    const ids=new Set(sel.map(it=>it.id));
-    const rest=ITEMS.filter(it=>!ids.has(it.id)).sort(byBox);
-    sel=sel.concat(rest.slice(0,DAILY_N-sel.length));
-  }
+  // UCB ranqueia o pool inteiro; pega os DAILY_N mais prioritários e embaralha p/ interleaving
+  let sel=rankByUCB(ITEMS).slice(0,DAILY_N);
   daily={steps:shuffle(sel.map(it=>({it}))),idx:0,done:0,total:sel.length,log:[]};
   setMode("daily");
 }
@@ -890,6 +1046,25 @@ const MODE2CLS={verbs:"verbos",modals:"modais",hhh:"hhh"};
 $("helpBtn").onclick=()=>openHelp(MODE2CLS[mode]||"verbos");
 $("helpClose").onclick=()=>$("help").classList.remove("show");
 $("help").addEventListener("click",e=>{if(e.target===$("help"))$("help").classList.remove("show");});
+
+// painel de sync
+function renderSyncPanel(){
+  const live=!!gToken && Date.now()<gTokenExp;
+  const seen=!!localStorage.getItem("jv-gconnected");
+  $("gConnect").textContent=live?"sincronizar agora":(seen?"reconectar com Google":"conectar com Google");
+  $("gDisc").style.display=live?"inline-block":"none";
+}
+function openSync(){
+  renderSyncPanel();
+  if(GOOGLE_CLIENT_ID) setSyncStatus(syncStatus||(gReady()?"pronto":"carregando Google…"));
+  else setSyncStatus("sync desligado (defina GOOGLE_CLIENT_ID no código)");
+  $("sync").classList.add("show");
+}
+$("syncBtn").onclick=openSync;
+$("syncClose").onclick=()=>$("sync").classList.remove("show");
+$("sync").addEventListener("click",e=>{if(e.target===$("sync"))$("sync").classList.remove("show");});
+$("gConnect").onclick=()=>gSync();
+$("gDisc").onclick=gDisconnect;
 
 // ============================================================
 // abas / modos
