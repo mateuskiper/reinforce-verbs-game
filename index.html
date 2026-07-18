@@ -14,15 +14,16 @@
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
   :root{
-    --bg:#141019; --bg2:#1d1727; --paper:#f8f4ec; --ink:#211b2e; --soft:#8a8398;
-    --inkc:#cbc4d8; --coral:#f4623a; --corald:#d94a24; --gold:#e0a83c; --teal:#2f9e8f;
-    --green:#3fae7c; --violet:#6d5ae6; --line:#332a44; --r:18px;
+    --bg:#1e1f22; --bg2:#2b2d31; --paper:#313338; --ink:#f2f3f5; --soft:#949ba4;
+    --inkc:#b5bac1; --coral:#5865f2; --corald:#949cf7; --blurpled:#4752c4; --gold:#f0b232;
+    --teal:#23a559; --green:#2dc770; --violet:#eb459e; --red:#da373c; --redl:#f23f43;
+    --line:#3f4147; --edge:#26272b; --btn2:#4e5058; --r:18px;
   }
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
   html,body{height:100%}
   body{
-    background:radial-gradient(140% 120% at 50% -10%, #241c33 0%, var(--bg) 55%);
-    color:var(--paper); font-family:'Inter',system-ui,sans-serif;
+    background:radial-gradient(140% 120% at 50% -10%, #2b2d31 0%, var(--bg) 55%);
+    color:var(--ink); font-family:'Inter',system-ui,sans-serif;
     min-height:100dvh; display:flex; flex-direction:column; align-items:center;
     padding:calc(14px + env(safe-area-inset-top)) calc(14px + env(safe-area-inset-right)) calc(24px + env(safe-area-inset-bottom)) calc(14px + env(safe-area-inset-left));
     -webkit-font-smoothing:antialiased; overflow-x:hidden; overflow-wrap:break-word;
@@ -30,7 +31,7 @@
   button,input{touch-action:manipulation}
   .wrap{width:100%;max-width:560px}
   .kicker{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.15em;
-    text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:8px}
+    text-transform:uppercase;color:var(--corald);display:flex;align-items:center;gap:8px}
   .kicker::before{content:"";width:22px;height:2px;background:var(--coral)}
   h1{font-family:'Archivo',sans-serif;font-weight:900;font-size:clamp(22px,6vw,30px);
     letter-spacing:-.02em;line-height:1;margin:6px 0 12px}
@@ -38,19 +39,19 @@
 
   .stats{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px}
   .mastery{flex:1;min-width:110px;background:var(--bg2);border:1px solid var(--line);border-radius:99px;height:12px;overflow:hidden}
-  .mastery>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--gold),var(--coral));transition:width .5s ease}
+  .mastery>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blurpled),var(--corald));transition:width .5s ease}
   .stat{font-family:'Space Mono',monospace;font-size:12px;color:var(--inkc);white-space:nowrap;
     background:var(--bg2);border:1px solid var(--line);border-radius:99px;padding:5px 10px;display:flex;align-items:center;gap:5px}
   .stat b{color:#fff}
   .flame{color:var(--gold)}
   button.stat{cursor:pointer;transition:.15s}
-  button.stat:hover{border-color:#4a3f63}
+  button.stat:hover{border-color:var(--btn2)}
 
   /* hero: treino do dia */
   .hero{width:100%;margin-bottom:10px;font-family:'Archivo',sans-serif;font-weight:900;font-size:17px;color:#fff;
-    background:linear-gradient(135deg,var(--coral),var(--corald));border:none;border-radius:14px;padding:13px 14px;
+    background:linear-gradient(135deg,var(--coral),var(--blurpled));border:none;border-radius:14px;padding:13px 14px;
     cursor:pointer;display:flex;flex-direction:column;gap:3px;align-items:center;transition:.15s;
-    box-shadow:0 12px 26px -14px rgba(244,98,58,.7)}
+    box-shadow:0 12px 26px -14px rgba(88,101,242,.7)}
   .hero:hover{transform:translateY(-1px)}
   .hero small{font-family:'Space Mono',monospace;font-size:10.5px;font-weight:400;opacity:.92;letter-spacing:.04em}
 
@@ -59,27 +60,25 @@
   .tab{flex:1;min-width:0;min-height:44px;display:flex;align-items:center;justify-content:center;
     font-family:'Inter';font-weight:600;font-size:clamp(10.5px,3vw,12px);line-height:1.15;padding:6px 4px;border-radius:12px;
     border:1px solid var(--line);background:var(--bg2);color:var(--inkc);cursor:pointer;transition:.15s;text-align:center}
-  .tab:hover{border-color:#4a3f63}
+  .tab:hover{border-color:var(--btn2)}
   .tab.on-verbs{background:var(--teal);border-color:var(--teal);color:#fff}
   .tab.on-modals{background:var(--violet);border-color:var(--violet);color:#fff}
-  .tab.on-hhh{background:var(--gold);border-color:var(--gold);color:#fff}
-  .tab.on-error{background:var(--coral);border-color:var(--coral);color:#fff}
+  .tab.on-hhh{background:var(--gold);border-color:var(--gold);color:#1e1f22}
 
   .card{background:var(--paper);color:var(--ink);border-radius:var(--r);overflow:hidden;
-    box-shadow:0 22px 46px -22px rgba(0,0,0,.75);border:1px solid #e4d8c4;min-height:340px;display:flex;flex-direction:column}
+    box-shadow:0 22px 46px -22px rgba(0,0,0,.75);border:1px solid var(--edge);min-height:340px;display:flex;flex-direction:column}
   .ribbon{padding:9px 16px;font-family:'Space Mono',monospace;font-size:11px;font-weight:700;
     letter-spacing:.12em;text-transform:uppercase;color:#fff;display:flex;align-items:center;gap:8px}
   .ribbon.verbs{background:var(--teal)}
   .ribbon.modals{background:var(--violet)}
-  .ribbon.hhh{background:var(--gold)}
-  .ribbon.error{background:var(--coral)}
-  .ribbon.daily{background:linear-gradient(90deg,var(--coral),var(--gold))}
+  .ribbon.hhh{background:var(--gold);color:#1e1f22}
+  .ribbon.daily{background:linear-gradient(90deg,var(--coral),var(--violet))}
   .body{padding:14px 14px 16px;flex:1;display:flex;flex-direction:column}
 
   /* progress (treino do dia) */
   .prog{display:flex;align-items:center;gap:8px;margin-bottom:12px;font-family:'Space Mono',monospace;font-size:11px;color:var(--soft)}
-  .prog .bar{flex:1;height:8px;background:#eee4d2;border-radius:99px;overflow:hidden}
-  .prog .bar>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--coral));transition:width .3s}
+  .prog .bar{flex:1;height:8px;background:var(--bg);border-radius:99px;overflow:hidden}
+  .prog .bar>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--coral),var(--violet));transition:width .3s}
 
   /* ===== memory board ===== */
   .board{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
@@ -88,27 +87,27 @@
   .cell.open .inner,.cell.done .inner{transform:rotateY(180deg)}
   .face2{position:absolute;inset:0;backface-visibility:hidden;border-radius:12px;display:flex;
     align-items:center;justify-content:center;padding:7px;text-align:center}
-  .back2{background:var(--ink);color:#5c5470;font-family:'Space Mono',monospace;font-weight:700;font-size:18px;
-    border:1px solid #372f4a}
+  .back2{background:var(--bg);color:var(--btn2);font-family:'Space Mono',monospace;font-weight:700;font-size:18px;
+    border:1px solid var(--edge)}
   .back2::after{content:"?"}
-  .front2{transform:rotateY(180deg);background:#fff;border:1.5px solid #e0d6c6}
+  .front2{transform:rotateY(180deg);background:#383a40;border:1.5px solid var(--edge)}
   .cell .pt{font-family:'Inter';font-weight:600;font-size:clamp(11px,3vw,13.5px);line-height:1.25;color:var(--ink)}
   .cell .en{font-family:'Space Mono',monospace;font-weight:700;font-size:clamp(13px,3.6vw,16px);color:var(--corald)}
-  .cell.done .front2{background:#e9f6ef;border-color:#9fdcbd}
+  .cell.done .front2{background:rgba(45,199,112,.14);border-color:rgba(45,199,112,.45)}
   .cell.done{cursor:default}
-  .cell.miss .front2{background:#fdeee9;border-color:#f6cbbc}
+  .cell.miss .front2{background:rgba(242,63,67,.14);border-color:rgba(242,63,67,.45)}
 
   /* learn line */
-  .learn{margin-top:12px;border-radius:12px;background:#fbf7ef;border:1px solid #eadfce;
+  .learn{margin-top:12px;border-radius:12px;background:var(--bg2);border:1px solid var(--edge);
     padding:11px 12px;display:none}
   .learn.show{display:block;animation:pop .2s ease}
   @keyframes pop{from{transform:scale(.98);opacity:.4}to{transform:scale(1);opacity:1}}
   .learn .map{font-family:'Inter';font-size:14px;color:var(--ink)}
   .learn .map b{font-family:'Space Mono',monospace;color:var(--corald)}
-  .learn .use{font-family:'Inter';font-size:12.5px;color:#3d3550;margin-top:4px;line-height:1.4}
-  .learn .use .lab{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:var(--teal);display:block;margin-bottom:1px}
-  .learn .exline{display:flex;align-items:center;gap:9px;margin-top:8px;padding-top:8px;border-top:1px dashed #d9cebc}
-  .learn .ex{font-family:'Inter';font-size:13px;color:#3d3550;line-height:1.35}
+  .learn .use{font-family:'Inter';font-size:12.5px;color:var(--inkc);margin-top:4px;line-height:1.4}
+  .learn .use .lab{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:var(--green);display:block;margin-bottom:1px}
+  .learn .exline{display:flex;align-items:center;gap:9px;margin-top:8px;padding-top:8px;border-top:1px dashed var(--line)}
+  .learn .ex{font-family:'Inter';font-size:13px;color:var(--inkc);line-height:1.35}
   .learn .ex i{color:var(--soft)}
   .famline{font-family:'Space Mono',monospace;font-size:11px;margin-top:7px;line-height:1.5}
 
@@ -124,75 +123,74 @@
   .doneMsg .sub{font-family:'Space Mono',monospace;font-size:12px;color:var(--soft);margin-top:2px}
   .nextBoard{width:100%;margin-top:10px;font-family:'Inter';font-weight:700;font-size:16px;color:#fff;
     background:var(--coral);border:none;border-radius:12px;padding:13px;cursor:pointer;transition:.15s}
-  .nextBoard:hover{background:var(--corald)}
+  .nextBoard:hover{background:var(--blurpled)}
 
   /* ===== single exercises (choice / typed) ===== */
   .einstr{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.05em;color:var(--corald);text-transform:uppercase;margin-bottom:12px}
-  .scen{font-family:'Inter';font-size:13px;color:#3d3550;background:#f3ecdf;border-radius:10px;padding:9px 11px;margin-bottom:12px;line-height:1.4}
+  .scen{font-family:'Inter';font-size:13px;color:var(--inkc);background:var(--bg2);border-radius:10px;padding:9px 11px;margin-bottom:12px;line-height:1.4}
   .esent{font-family:'Inter';font-size:clamp(18px,5vw,24px);font-weight:600;line-height:1.45;color:var(--ink)}
   .esent .gapx{color:var(--corald);border-bottom:2px dashed var(--coral);padding:0 4px;letter-spacing:2px}
   .esent .hint{font-family:'Space Mono',monospace;font-size:13px;color:var(--soft);font-weight:400;white-space:nowrap}
-  .ebad{color:var(--corald);text-decoration:underline wavy var(--coral);text-underline-offset:4px;font-weight:700}
   .emean{font-family:'Inter';font-style:italic;font-size:13px;color:var(--soft);margin-top:10px}
 
   .choices{display:flex;flex-direction:column;gap:8px;margin-top:16px}
   .choices.big{flex-direction:row;flex-wrap:wrap}
   .choice{font-family:'Space Mono',monospace;font-weight:700;font-size:16px;text-align:left;padding:12px 14px;border-radius:12px;
-    border:2px solid #e0d6c6;background:#fff;color:var(--ink);cursor:pointer;transition:.15s}
+    border:2px solid var(--line);background:var(--bg2);color:var(--ink);cursor:pointer;transition:.15s}
   .choices.big .choice{flex:1 1 30%;text-align:center;font-size:17px;padding:15px 8px}
-  .choice:hover{border-color:var(--gold)}
-  .choice.ok{background:#e9f6ef;border-color:var(--green)}
-  .choice.no{background:#fdeee9;border-color:var(--coral)}
+  .choice:hover{border-color:var(--coral)}
+  .choice.ok{background:rgba(45,199,112,.14);border-color:var(--teal)}
+  .choice.no{background:rgba(242,63,67,.14);border-color:var(--red)}
   .choice.dim{opacity:.45}
   .choice:disabled{cursor:default}
 
   .inrow{margin-top:auto;padding-top:16px;display:flex;gap:8px}
   #answer{flex:1;font-family:'Space Mono',monospace;font-size:18px;font-weight:700;color:var(--ink);
-    background:#fff;border:2px solid #e0d6c6;border-radius:12px;padding:13px 14px;outline:none;transition:.15s;min-width:0}
+    background:var(--bg);border:2px solid var(--edge);border-radius:12px;padding:13px 14px;outline:none;transition:.15s;min-width:0}
   #answer:focus{border-color:var(--coral)}
-  #answer::placeholder{color:#c3bab0;font-weight:400}
-  #go{font-family:'Inter';font-weight:700;font-size:16px;color:#fff;background:var(--ink);border:none;
+  #answer::placeholder{color:#6d6f78;font-weight:400}
+  #go{font-family:'Inter';font-weight:700;font-size:16px;color:#fff;background:var(--coral);border:none;
     border-radius:12px;padding:0 20px;cursor:pointer;transition:.15s}
-  #go:hover{background:#000}
+  #go:hover{background:var(--blurpled)}
   #go:disabled{opacity:.5;cursor:default}
 
   .fb{border-radius:12px;padding:13px 14px;margin-top:12px;display:none}
   .fb.show{display:block;animation:pop .2s ease}
-  .fb.ok{background:#e9f6ef;border:1px solid #bfe6d1}
-  .fb.no{background:#fdeee9;border:1px solid #f6cbbc}
+  .fb.ok{background:rgba(45,199,112,.12);border:1px solid rgba(45,199,112,.35)}
+  .fb.no{background:rgba(242,63,67,.12);border:1px solid rgba(242,63,67,.35)}
   .fb .verdict{font-family:'Space Mono',monospace;font-weight:700;font-size:13px;letter-spacing:.04em}
   .fb.ok .verdict{color:var(--green)}
-  .fb.no .verdict{color:var(--corald)}
+  .fb.no .verdict{color:var(--redl)}
   .fb .sol{font-family:'Inter';font-size:14px;color:var(--ink);margin-top:6px}
   .fb .sol b{font-family:'Space Mono',monospace}
-  .fb .why{font-family:'Inter';font-size:12.5px;color:#3d3550;margin-top:4px;line-height:1.4}
-  .fb .exline{display:flex;align-items:center;gap:9px;margin-top:9px;padding-top:9px;border-top:1px dashed #d9cebc}
-  .fb .ex{font-family:'Inter';font-size:13px;color:#3d3550;line-height:1.35}
+  .fb .why{font-family:'Inter';font-size:12.5px;color:var(--inkc);margin-top:4px;line-height:1.4}
+  .fb .exline{display:flex;align-items:center;gap:9px;margin-top:9px;padding-top:9px;border-top:1px dashed var(--line)}
+  .fb .ex{font-family:'Inter';font-size:13px;color:var(--inkc);line-height:1.35}
   .fb .ex i{color:var(--soft)}
   #next{width:100%;margin-top:12px;font-family:'Inter';font-weight:700;font-size:16px;color:#fff;
     background:var(--coral);border:none;border-radius:12px;padding:13px;cursor:pointer;display:none;transition:.15s}
   #next.show{display:block}
-  #next:hover{background:var(--corald)}
+  #next:hover{background:var(--blurpled)}
 
   /* ===== daily summary ===== */
   .sum{text-align:center;padding-top:8px}
   .sum .big{font-family:'Archivo';font-weight:900;font-size:24px;color:var(--green)}
-  .sum .score{font-family:'Space Mono',monospace;font-size:14px;color:#3d3550;margin-top:6px}
+  .sum .score{font-family:'Space Mono',monospace;font-size:14px;color:var(--inkc);margin-top:6px}
   .sum .day{font-family:'Space Mono',monospace;font-size:12px;color:var(--soft);margin-top:2px}
   .sum h4{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin:16px 0 6px}
   .sumchips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
   .sumchip{font-family:'Space Mono',monospace;font-size:12px;font-weight:700;border-radius:8px;padding:5px 9px}
-  .sumchip.up{background:#e9f6ef;color:#237a52;border:1px solid #bfe6d1}
-  .sumchip.dn{background:#fdeee9;color:var(--corald);border:1px solid #f6cbbc}
+  .sumchip.up{background:rgba(45,199,112,.14);color:var(--green);border:1px solid rgba(45,199,112,.4)}
+  .sumchip.dn{background:rgba(242,63,67,.14);color:var(--redl);border:1px solid rgba(242,63,67,.4)}
 
   /* ===== album de famílias ===== */
-  .album{position:fixed;inset:0;background:rgba(10,7,15,.75);display:none;align-items:flex-start;justify-content:center;
+  .album{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:flex-start;justify-content:center;
     padding:calc(16px + env(safe-area-inset-top)) 14px calc(16px + env(safe-area-inset-bottom));overflow:auto;z-index:50;
     -webkit-overflow-scrolling:touch}
   .album.show{display:flex}
   .albcard{background:var(--paper);color:var(--ink);border-radius:var(--r);max-width:560px;width:100%;padding:0 16px 20px;position:relative}
   .albhead{position:sticky;top:0;z-index:2;background:var(--paper);display:flex;justify-content:space-between;
-    align-items:flex-start;gap:10px;padding:15px 0 10px;border-bottom:1px solid #eadfce}
+    align-items:flex-start;gap:10px;padding:15px 0 10px;border-bottom:1px solid var(--edge)}
   .albtitle{min-width:0}
   .albcard h2{font-family:'Archivo';font-weight:900;font-size:clamp(17px,5vw,20px);line-height:1.05}
   .albcard .albsub{font-family:'Space Mono',monospace;font-size:11px;color:var(--soft);margin-top:3px;line-height:1.4}
@@ -204,14 +202,14 @@
   .albfam h3 .dot{width:10px;height:10px;border-radius:3px;display:inline-block}
   .albfam .tip{font-family:'Inter';font-size:12px;color:var(--soft);margin-top:2px}
   .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
-  .chip{font-family:'Space Mono',monospace;font-size:11px;border:1.5px solid #e0d6c6;border-radius:8px;padding:5px 8px;background:#fff;color:var(--ink)}
+  .chip{font-family:'Space Mono',monospace;font-size:11px;border:1.5px solid var(--line);border-radius:8px;padding:5px 8px;background:var(--bg2);color:var(--ink)}
   .chip b{color:var(--corald)}
-  .chip.mid{background:#fbf3df;border-color:#e8d6a8}
-  .chip.done{background:#e9f6ef;border-color:#9fdcbd}
+  .chip.mid{background:rgba(240,178,50,.12);border-color:rgba(240,178,50,.45)}
+  .chip.done{background:rgba(45,199,112,.14);border-color:rgba(45,199,112,.45)}
 
   /* painel de sync */
-  .syncbox{margin-top:16px;border:1px solid #eadfce;border-radius:12px;padding:12px 13px;background:#fbf7ef}
-  .synclab{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--teal);margin-bottom:8px}
+  .syncbox{margin-top:16px;border:1px solid var(--edge);border-radius:12px;padding:12px 13px;background:var(--bg2)}
+  .synclab{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--green);margin-bottom:8px}
   .syncrow{display:flex;gap:8px;align-items:center}
   .syncrow .chip{cursor:pointer;font-weight:700;padding:9px 12px;white-space:nowrap}
   .synctip{font-family:'Inter';font-size:12px;color:var(--soft);margin-top:8px;line-height:1.4}
@@ -225,17 +223,17 @@
 
   /* ===== card de ajuda ===== */
   .helpnav{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
-  .hchip{font-family:'Inter';font-weight:600;font-size:12.5px;border:1.5px solid #e0d6c6;border-radius:99px;
-    padding:7px 13px;background:#fff;color:var(--soft);cursor:pointer;transition:.15s}
-  .hchip:hover{border-color:#c9bda6}
-  .hchip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
-  .helpitem{border-top:1px solid #eadfce;padding:11px 2px}
+  .hchip{font-family:'Inter';font-weight:600;font-size:12.5px;border:1.5px solid var(--line);border-radius:99px;
+    padding:7px 13px;background:var(--bg2);color:var(--inkc);cursor:pointer;transition:.15s}
+  .hchip:hover{border-color:var(--btn2)}
+  .hchip.on{background:var(--coral);color:#fff;border-color:var(--coral)}
+  .helpitem{border-top:1px solid var(--edge);padding:11px 2px}
   .helpitem:first-child{border-top:none}
   .helpitem .hw{font-family:'Space Mono',monospace;font-weight:700;font-size:15px;color:var(--corald)}
   .helpitem .hw .tr{color:var(--soft);font-family:'Inter';font-weight:500;font-size:12.5px}
-  .helpitem .forms{font-family:'Space Mono',monospace;font-size:11.5px;color:#5a5270;margin-top:3px;line-height:1.5}
+  .helpitem .forms{font-family:'Space Mono',monospace;font-size:11.5px;color:var(--inkc);margin-top:3px;line-height:1.5}
   .helpitem .forms b{color:var(--ink)}
-  .helpitem .htip{font-family:'Inter';font-size:12.5px;color:#3d3550;margin-top:4px;line-height:1.42}
+  .helpitem .htip{font-family:'Inter';font-size:12.5px;color:var(--inkc);margin-top:4px;line-height:1.42}
   .helpitem .hex{display:flex;align-items:flex-start;gap:8px;margin-top:5px}
   .helpitem .hex .spk{width:26px;height:26px;flex-shrink:0}
   .helpitem .hex .spk svg{width:12px;height:12px}
@@ -243,21 +241,19 @@
 
   /* ===== card de stats ===== */
   .strows{margin-top:6px}
-  .strow{display:flex;align-items:center;gap:10px;border-top:1px solid #eadfce;padding:9px 2px}
+  .strow{display:flex;align-items:center;gap:10px;border-top:1px solid var(--edge);padding:9px 2px}
   .strows .strow:first-child{border-top:none}
   .strow.dim{opacity:.45}
   .strow .sw{flex:1;min-width:0}
   .strow .sw b{font-family:'Space Mono',monospace;font-size:13.5px;color:var(--corald);display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .strow .sw small{font-family:'Inter';font-size:11px;color:var(--soft);display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .stlvl{display:flex;gap:3px;flex-shrink:0}
-  .stlvl i{width:9px;height:9px;border-radius:3px;background:#e6dcc9}
-  .stlvl i.on{background:var(--teal)}
-  .stnums{flex-shrink:0;text-align:right;font-family:'Space Mono',monospace;font-size:11px;line-height:1.5;color:#5a5270;white-space:nowrap}
-  .stnums .ok{color:#237a52;font-weight:700}
-  .stnums .no{color:var(--corald);font-weight:700}
+  .stlvl i{width:9px;height:9px;border-radius:3px;background:var(--line)}
+  .stlvl i.on{background:var(--green)}
+  .stnums{flex-shrink:0;text-align:right;font-family:'Space Mono',monospace;font-size:11px;line-height:1.5;color:var(--inkc);white-space:nowrap}
+  .stnums .ok{color:var(--green);font-weight:700}
+  .stnums .no{color:var(--redl);font-weight:700}
 
-  .foot{margin-top:14px;font-family:'Space Mono',monospace;font-size:10.5px;color:#6f6785;text-align:center;line-height:1.7}
-  .foot a{color:#8a8398;text-decoration:underline;cursor:pointer}
 
   /* ===== responsividade ===== */
   .tab,.stat,.choice,.spk,.hchip,.chip,.hero,.ribhelp,.albclose,.nextBoard{touch-action:manipulation}
@@ -299,7 +295,6 @@
     <div class="stat">🎯 <b id="mpct">0%</b></div>
     <div class="stat"><span class="flame">🔥</span><b id="streak">0</b></div>
     <button class="stat" id="albBtn" title="Álbum de famílias de verbos">🃏 famílias</button>
-    <button class="stat" id="helpBtn" title="Ajuda — como e quando usar cada palavra">🛟 ajuda</button>
     <button class="stat" id="statsBtn" title="Stats — progresso, acertos e erros por palavra">📊 stats</button>
     <button class="stat" id="syncBtn" title="Sincronizar progresso entre aparelhos">🔄 sync</button>
   </div>
@@ -312,7 +307,6 @@
     <button class="tab" id="tab-verbs">✍ Verbos</button>
     <button class="tab" id="tab-modals">◆ Modais</button>
     <button class="tab" id="tab-hhh">have·has·had</button>
-    <button class="tab" id="tab-error">⚠ Caça ao erro</button>
   </div>
 
   <div class="card">
@@ -320,11 +314,6 @@
     <div class="body" id="gamebody"></div>
   </div>
 
-  <div class="foot">
-    Todo exercício pede pra <b>escrever a resposta</b> — é assim que a forma gruda na memória<br>
-    O Treino do dia mistura tudo e traz de volta o que você está prestes a esquecer<br>
-    Progresso salvo neste navegador · <a id="resetBtn">zerar progresso</a>
-  </div>
 </div>
 
 <div class="album" id="album">
@@ -402,9 +391,9 @@ const V = {
  work:["trabalhar / funcionar","worked","worked",null,0,["I worked late yesterday.","Trabalhei até tarde ontem."],["It hasn't worked so far.","Não funcionou até agora."],null],
 };
 const REDSRC={go:"going to",let:"let me",get:"got to",need:"need to",give:"give me",come:"come on",want:"want to"};
-const PAST_CUE={go:"fui ontem",let:"deixou ontem",get:"consegui ontem",need:"precisei ontem",keep:"guardei ontem",move:"mudaram ontem",give:"deu ontem",feel:"senti ontem",run:"corri ontem",come:"veio ontem",call:"ligou ontem",know:"soube ontem",take:"levei ontem",make:"fez ontem",look:"procurei ontem",want:"quis ontem",think:"pensei ontem",say:"disse ontem",chill:"relaxei ontem",work:"trabalhei ontem"};
-const PART_CUE={go:"já fui",let:"já deixei",get:"já consegui",need:"já precisei",keep:"já guardei",move:"já mudei",give:"já dei",feel:"já senti",run:"já corri",come:"já veio",call:"já liguei",know:"já conheci",take:"já levei",make:"já fiz",look:"já procurei",want:"sempre quis",think:"já pensei",say:"já disse",chill:"já relaxei",work:"já funcionou"};
-const RED_CUE={go:"vou logo",want:"quero ir",get:"tenho que",need:"preciso ir",give:"me dá",let:"me deixa",come:"anda logo"};
+const PAST_CUE={go:"fui ontem",let:"permitiu / deixou ontem",get:"consegui ontem",need:"precisei ontem",keep:"guardei ontem",move:"mudaram ontem",give:"entregou / deu ontem",feel:"senti ontem",run:"corri ontem",come:"veio ontem",call:"ligou ontem",know:"soube ontem",take:"levei ontem",make:"fez ontem",look:"procurei ontem",want:"quis ontem",think:"pensei ontem",say:"disse ontem",chill:"relaxei ontem",work:"trabalhei ontem"};
+const PART_CUE={go:"já fui",let:"já deixei",get:"já consegui",need:"já precisei",keep:"mantiveram / já guardei",move:"já mudei",give:"já dei",feel:"já senti",run:"já corri",come:"já veio",call:"já liguei",know:"já conheci",take:"já levei",make:"já fiz",look:"já procurei",want:"sempre quis",think:"já pensei",say:"já disse",chill:"tranquilo / já relaxei",work:"já funcionou"};
+const RED_CUE={go:"vou logo",want:"quero ir",get:"preciso / tenho que",need:"preciso ir",give:"me dá",let:"me deixa",come:"anda logo"};
 const PRES_CUE={go:"ele vai (sempre)",let:"ela deixa (sempre)",get:"ele chega (sempre)",need:"ela precisa (sempre)",keep:"ele continua (sempre)",move:"ela se muda (sempre)",give:"ele dá (sempre)",feel:"ela se sente (hoje)",run:"ele corre (sempre)",come:"ela vem (sempre)",call:"ele liga (sempre)",know:"ela sabe (sempre)",take:"ele pega (sempre)",make:"ela faz (sempre)",look:"ele parece (hoje)",want:"ela quer (agora)",think:"ele acha (agora)",say:"ela diz (sempre)",chill:"ele relaxa (sempre)",work:"ela trabalha (sempre)"};
 const PRES_EX={
  go:["He goes to the gym every day.","Ele vai à academia todo dia."],
@@ -433,11 +422,11 @@ const REDLIST=["gonna","lemme","gotta","needa","gimme","c'mon","wanna"];
 
 // famílias de irregulares (chunking por padrão)
 const FAM={
- reg:{label:"Regulares -ed",color:"#2f9e8f",tip:"passado e particípio: é só somar -ed",members:["need","move","call","look","want","chill","work"]},
- abb:{label:"2× igual",color:"#b8860b",tip:"passado = particípio — uma forma só pra decorar",members:["keep","feel","make","think","say"]},
- abc:{label:"Muda tudo",color:"#d94a24",tip:"três formas diferentes — os que mais derrubam",members:["go","get","give","know","take"]},
- aba:{label:"Vai e volta",color:"#6d5ae6",tip:"o particípio volta a ser igual ao presente",members:["run","come"]},
- aaa:{label:"Invariável",color:"#3fae7c",tip:"nunca muda: let · let · let",members:["let"]}
+ reg:{label:"Regulares -ed",color:"#2dc770",tip:"passado e particípio: é só somar -ed",members:["need","move","call","look","want","chill","work"]},
+ abb:{label:"2× igual",color:"#f0b232",tip:"passado = particípio — uma forma só pra decorar",members:["keep","feel","make","think","say"]},
+ abc:{label:"Muda tudo",color:"#f23f43",tip:"três formas diferentes — os que mais derrubam",members:["go","get","give","know","take"]},
+ aba:{label:"Vai e volta",color:"#949cf7",tip:"o particípio volta a ser igual ao presente",members:["run","come"]},
+ aaa:{label:"Invariável",color:"#00a8fc",tip:"nunca muda: let · let · let",members:["let"]}
 };
 const FAM_OF={}; for(const f in FAM) FAM[f].members.forEach(m=>FAM_OF[m]=f);
 
@@ -543,49 +532,10 @@ const HHH_DEFS=[
 ].map((e,i)=>({id:"h-"+i,pool:"hhh",s:e[0],opts:e[1],answer:e[2],why:e[3],pt:e[4]}));
 ITEMS=ITEMS.concat(HHH_DEFS);
 
-// caça ao erro (digitação)
-const ERR_DEFS=[
- ["I have [[went]] home.","gone","Particípio de go é gone (com have/has/had).","Eu fui pra casa."],
- ["He [[getted]] a new phone.","got","Passado de get é got.","Ele comprou um celular novo."],
- ["I have [[took]] the bus.","taken","Particípio: taken (I have taken).","Peguei o ônibus."],
- ["I have [[knew]] him for years.","known","Particípio: known.","Conheço ele há anos."],
- ["She has [[gave]] up.","given","Particípio: given.","Ela desistiu."],
- ["She [[maked]] dinner.","made","Passado e particípio: made.","Ela fez o jantar."],
- ["I have [[ran]] five miles.","run","Particípio volta a run (I've run).","Corri oito km."],
- ["She has [[came]] back.","come","Particípio volta a come (has come).","Ela voltou."],
- ["I [[feeled]] sick.","felt","Passado e particípio: felt.","Me senti mal."],
- ["He [[keeped]] trying.","kept","Passado e particípio: kept.","Ele continuou tentando."],
- ["I [[thinked]] about it.","thought","Passado e particípio: thought.","Pensei nisso."],
- ["She [[sayed]] hi.","said","Passado e particípio: said.","Ela disse oi."],
- ["She [[letted]] me go.","let","let é invariável: let / let / let.","Ela me deixou ir."],
- ["I [[is]] happy.","am","Com I, o verbo be é sempre am.","Eu estou feliz."],
- ["The house was [[build]] in 1990.","built","Voz passiva: be + particípio (built).","A casa foi construída em 1990."],
- ["They [[has]] finished.","have","they/we/I → have (has é só he/she/it).","Eles terminaram."],
- ["She [[don't]] like coffee.","doesn't","3ª pessoa (she/he/it): doesn't.","Ela não gosta de café."],
- ["[[Does]] they live here?","Do","they → Do (does é só he/she/it).","Eles moram aqui?"],
- ["I didn't [[saw]] it.","see","Depois de did, o verbo fica na base: see.","Eu não vi isso."],
- ["She [[cans]] swim.","can","Modal não muda de forma: can / can / can.","Ela sabe nadar."],
- ["He can [[swims]] fast.","swim","Depois do modal, verbo na forma base.","Ele nada rápido."],
- ["You must [[to wear]] a helmet.","wear","Modal + verbo base, sem “to”.","Você deve usar capacete."],
- ["You should [[to rest]].","rest","Modal + base, nunca “to”.","Você deveria descansar."],
- ["He [[wanna]] go home.","wants to","wanna = want to, só com I/you/we/they; com he/she é wants to.","Ele quer ir pra casa."],
- ["You [[mustn't]] come if you're busy.","don't have to","mustn't = proibido. “Não precisa” = don't have to.","Você não precisa vir se estiver ocupado."],
- ["She [[have]] finished her homework.","has","he/she/it → has.","Ela terminou a lição."],
- ["I [[has]] been there twice.","have","has é só he/she/it; com I → have.","Já estive lá duas vezes."],
- ["It [[haven't]] worked so far.","hasn't","it → hasn't.","Não funcionou até agora."],
- ["[[Has]] they called you back?","Have","they → have.","Eles te retornaram?"],
- ["He [[don't]] have to pay.","doesn't","3ª pessoa: doesn't. (don't have to = não precisa)","Ele não precisa pagar."],
- ["Did you [[went]] home early?","go","Depois de did, o verbo fica na base: go.","Você foi pra casa cedo?"],
- ["He [[go]] to work by bus.","goes","he/she/it no presente: verbo + s (go → goes).","Ele vai de ônibus pro trabalho."],
- ["She [[want]] some coffee.","wants","he/she/it no presente: verbo + s.","Ela quer um café."],
-].map((e,i)=>({id:"err-"+i,pool:"error",sentence:e[0],answer:e[1],why:e[2],pt:e[3]}));
-ITEMS=ITEMS.concat(ERR_DEFS);
-
 const VERB_POOL=ITEMS.filter(it=>it.pool==="verbs");
 const MODAL_POOL=ITEMS.filter(it=>it.pool==="modals");
 const SCEN_POOL=ITEMS.filter(it=>it.pool==="scen");
 const HHH_POOL=ITEMS.filter(it=>it.pool==="hhh");
-const ERR_POOL=ITEMS.filter(it=>it.pool==="error");
 const TOTAL=ITEMS.length;
 
 // ============================================================
@@ -809,12 +759,6 @@ function norm(s){return (s||"").toLowerCase().trim().replace(/[.!?,;:]+$/,"").re
 // ============================================================
 const VERB_INSTR={vpast:"Escreva o PASSADO",vpart:"Escreva o PARTICÍPIO (com have/has)",vpres:"Presente com he/she/it — escreva a forma",vred:"Forma da fala — escreva a reduzida"};
 function typedSpec(it){
-  if(it.pool==="error"){
-    const full=it.sentence.replace(/\[\[(.+?)\]\]/,it.answer);
-    return {instr:"Ache o erro · escreva a forma certa",
-      promptHTML:it.sentence.replace(/\[\[(.+?)\]\]/,'<span class="ebad">$1</span>'),
-      meaning:it.pt,answer:it.answer,full,fullPt:it.pt,why:it.why,placeholder:"escreva a correção…"};
-  }
   if(it.pool==="scen"){
     const full=it.s.replace("___",it.answer);
     return {instr:"Leia a situação e escreva a resposta",pre:`<div class="scen">🎬 ${it.sc}</div>`,
@@ -896,7 +840,6 @@ document.addEventListener("keydown",e=>{
 function startVerbs(){renderTyped(pickSingle(VERB_POOL),startVerbs);}
 function startModals(){renderTyped(pickSingle([...MODAL_POOL,...SCEN_POOL]),startModals);}
 function startHHH(){renderTyped(pickSingle(HHH_POOL),startHHH);}
-function startError(){renderTyped(pickSingle(ERR_POOL),startError);}
 
 // ============================================================
 // treino do dia (interleaving + SRS)
@@ -944,7 +887,7 @@ function dailySummary(){
     ${ups.length?`<h4>subiram de nível</h4><div class="sumchips">${ups.map(it=>`<span class="sumchip up">${it.answer}</span>`).join("")}</div>`:""}
     ${downs.length?`<h4>voltaram pra revisão</h4><div class="sumchips">${downs.map(it=>`<span class="sumchip dn">${it.answer}</span>`).join("")}</div>`:""}
     <button class="nextBoard" id="again">Treinar mais →</button>
-    <button class="nextBoard" id="back" style="background:var(--ink);margin-top:8px">Voltar aos modos</button>
+    <button class="nextBoard" id="back" style="background:var(--btn2);margin-top:8px">Voltar aos modos</button>
   </div>`;
   $("again").onclick=startDaily;
   $("back").onclick=()=>setMode("verbs");
@@ -1070,7 +1013,6 @@ function openHelp(cls){
   $("help").classList.add("show");
 }
 const MODE2CLS={verbs:"verbos",modals:"modais",hhh:"hhh"};
-$("helpBtn").onclick=()=>openHelp(MODE2CLS[mode]||"verbos");
 $("helpClose").onclick=()=>$("help").classList.remove("show");
 $("help").addEventListener("click",e=>{if(e.target===$("help"))$("help").classList.remove("show");});
 
@@ -1080,8 +1022,7 @@ $("help").addEventListener("click",e=>{if(e.target===$("help"))$("help").classLi
 const STATS_CLASSES=[
  {key:"verbs",label:"Verbos"},
  {key:"modals",label:"Modais"},
- {key:"hhh",label:"have · has · had"},
- {key:"error",label:"Caça ao erro"}
+ {key:"hhh",label:"have · has · had"}
 ];
 const HHH_SUB={have:"I · you · we · they",has:"he · she · it",had:"passado — qualquer sujeito","hasn't":"negativa de has"};
 // agrega os itens da classe por palavra (verbos pelo verbo-base; o resto pela resposta)
@@ -1090,8 +1031,7 @@ function statsGroups(key){
   if(key==="verbs"){ pool=VERB_POOL; keyOf=it=>it.base; subOf=(k,its)=>V[k][0]; }
   else if(key==="modals"){ pool=[...MODAL_POOL,...SCEN_POOL]; keyOf=it=>it.answer.toLowerCase();
     subOf=(k,its)=>{const m=MODAL_DEFS.find(d=>d.answer.toLowerCase()===k); return m?m.cue:its.length+" situação(ões)";}; }
-  else if(key==="hhh"){ pool=HHH_POOL; keyOf=it=>it.answer.toLowerCase(); subOf=k=>HHH_SUB[k]||""; }
-  else { pool=ERR_POOL; keyOf=it=>it.answer.toLowerCase(); subOf=(k,its)=>its.length+" frase(s)"; }
+  else { pool=HHH_POOL; keyOf=it=>it.answer.toLowerCase(); subOf=k=>HHH_SUB[k]||""; }
   const map=new Map();
   pool.forEach(it=>{const k=keyOf(it); if(!map.has(k))map.set(k,[]); map.get(k).push(it);});
   const rows=[...map].map(([k,its])=>{
@@ -1150,7 +1090,7 @@ function openStats(cls){
   $("statsM").classList.add("show");
   statsSyncCheck();
 }
-$("statsBtn").onclick=()=>openStats(["verbs","modals","hhh","error"].includes(mode)?mode:"verbs");
+$("statsBtn").onclick=()=>openStats(["verbs","modals","hhh"].includes(mode)?mode:"verbs");
 $("statsClose").onclick=()=>$("statsM").classList.remove("show");
 $("statsM").addEventListener("click",e=>{if(e.target===$("statsM"))$("statsM").classList.remove("show");});
 
@@ -1178,13 +1118,12 @@ $("gDisc").onclick=gDisconnect;
 // ============================================================
 function setMode(m){
   mode=m;
-  const map={verbs:"tab-verbs",modals:"tab-modals",hhh:"tab-hhh",error:"tab-error"};
+  const map={verbs:"tab-verbs",modals:"tab-modals",hhh:"tab-hhh"};
   for(const k in map)$(map[k]).className="tab"+(m===k?" on-"+k:"");
   const rib=$("ribbon"),rl=$("rlabel");
   if(m==="verbs"){rib.className="ribbon verbs";rl.textContent="Verbos · escreva a forma";startVerbs();}
   else if(m==="modals"){rib.className="ribbon modals";rl.textContent="Modais · escreva a resposta";startModals();}
   else if(m==="hhh"){rib.className="ribbon hhh";rl.textContent="have · has · had";startHHH();}
-  else if(m==="error"){rib.className="ribbon error";rl.textContent="Caça ao erro";startError();}
   else if(m==="daily"){rib.className="ribbon daily";rl.textContent="▶ Treino do dia";nextDailyStep();}
   const rh=$("ribHelp");
   if(MODE2CLS[m]){rh.classList.remove("hide");rh.onclick=()=>openHelp(MODE2CLS[m]);}
@@ -1194,13 +1133,7 @@ function setMode(m){
 $("tab-verbs").onclick=()=>setMode("verbs");
 $("tab-modals").onclick=()=>setMode("modals");
 $("tab-hhh").onclick=()=>setMode("hhh");
-$("tab-error").onclick=()=>setMode("error");
 $("heroBtn").onclick=startDaily;
-$("resetBtn").onclick=()=>{
-  if(confirm("Zerar todo o progresso salvo? Isso não tem volta.")){
-    localStorage.removeItem(KEY); location.reload();
-  }
-};
 
 updStats();
 setMode("verbs");
