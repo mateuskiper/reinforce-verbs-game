@@ -46,6 +46,8 @@
   h1 em{font-style:normal;color:var(--coral)}
 
   .stats{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px}
+  .statrow-prog{margin-bottom:8px}
+  .statrow-btns .stat{flex:1;justify-content:center}
   .mastery{flex:1;min-width:110px;background:var(--bg2);border:1px solid var(--line);border-radius:99px;height:12px;overflow:hidden}
   .mastery>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blurpled),var(--corald));transition:width .5s ease}
   .stat{font-family:'Space Mono',monospace;font-size:12px;color:var(--inkc);white-space:nowrap;
@@ -271,7 +273,7 @@
   /* celulares estreitos */
   @media (max-width:460px){
     .stats{gap:6px}
-    .mastery{flex-basis:100%;min-width:0}
+    .mastery{min-width:0}
     h1{margin:4px 0 10px}
     .hero{font-size:16px;padding:12px}
     .hero small{font-size:10px}
@@ -300,10 +302,12 @@
   <div class="kicker">Treino ativo · 20 verbos · modais · have/has/had</div>
   <h1>Na ponta da <em>língua</em></h1>
 
-  <div class="stats">
+  <div class="stats statrow-prog">
     <div class="mastery"><i id="mbar"></i></div>
     <div class="stat">🎯 <b id="mpct">0%</b></div>
     <div class="stat"><span class="flame">🔥</span><b id="streak">0</b></div>
+  </div>
+  <div class="stats statrow-btns">
     <button class="stat" id="albBtn" title="Álbum de famílias de verbos">🃏 famílias</button>
     <button class="stat" id="statsBtn" title="Stats — progresso, acertos e erros por palavra">📊 stats</button>
     <button class="stat" id="syncBtn" title="Sincronizar progresso entre aparelhos">🔄 sync</button>
@@ -369,6 +373,11 @@
       <div class="syncrow"><button class="chip" id="gConnect">conectar com Google</button><button class="chip" id="gDisc" style="display:none">desconectar</button></div>
       <div class="synctip">Seu progresso fica numa planilha no <b>seu próprio</b> Google Drive («jogo-verbos-progresso»). Nada é compartilhado, e funciona em qualquer aparelho com a mesma conta.</div>
     </div>
+    <div class="syncbox">
+      <div class="synclab" style="color:var(--redl)">Recomeçar do zero</div>
+      <div class="syncrow"><button class="chip" id="gReset" style="border-color:rgba(242,63,67,.45);color:var(--redl)">🗑 resetar progresso</button></div>
+      <div class="synctip">Zera tudo que a seleção UCB usa — níveis, tentativas, acertos e erros de cada palavra — além da sequência de dias. Se estiver conectado, a planilha no Drive também é zerada. <b>Não dá pra desfazer.</b></div>
+    </div>
     <div class="synctip" id="syncStat" style="margin-top:12px;font-weight:700"></div>
   </div>
 </div>
@@ -379,20 +388,20 @@
 // verb: [pt, past, participle, reduced|null, boss, pastEx, partEx, redEx]
 // ============================================================
 const V = {
- go:["ir","went","gone","gonna",1,["I went to the gym yesterday.","Fui à academia ontem."],["I've gone there a few times.","Já fui lá algumas vezes."],["I'm gonna go tonight.","Vou hoje à noite."]],
+ go:["ir","went","gone","gonna",1,["I went to the gym yesterday.","Fui à academia ontem."],["I've gone there a few times.","Já fui lá algumas vezes."],["I'm gonna do it tomorrow.","Vou fazer amanhã."]],
  let:["deixar","let","let","lemme",1,["She let me borrow her car.","Ela me deixou pegar o carro."],["They've let us stay late.","Já nos deixaram ficar até tarde."],["Lemme know when you're free.","Me avisa quando estiver livre."]],
- get:["conseguir / pegar","got","gotten","gotta",1,["I got a new jacket.","Comprei uma jaqueta nova."],["I've gotten better at this.","Fiquei melhor nisso."],["I gotta go now.","Tenho que ir agora."]],
+ get:["conseguir / pegar","got","gotten","gotta",1,["I got the job!","Consegui o emprego!"],["I've gotten everything I need.","Já consegui tudo o que preciso."],["I gotta go now.","Tenho que ir agora."]],
  need:["precisar","needed","needed","needa",0,["I needed more time.","Eu precisava de mais tempo."],["I've needed a break for weeks.","Faz semanas que preciso de pausa."],["I needa finish this today.","Preciso terminar isso hoje."]],
  keep:["continuar / manter","kept","kept",null,1,["He kept calling me all day.","Ele ficou me ligando o dia todo."],["I've kept all your messages.","Guardei todas as suas mensagens."],null],
  move:["mudar-se / mover","moved","moved",null,0,["They moved to Chicago.","Eles se mudaram pra Chicago."],["I've moved three times this year.","Já me mudei três vezes."],null],
- give:["dar","gave","given","gimme",1,["She gave me good advice.","Ela me deu um bom conselho."],["He's given up too soon.","Ele desistiu cedo demais."],["Gimme a second.","Me dá um segundo."]],
+ give:["dar","gave","given","gimme",1,["She gave me good advice.","Ela me deu um bom conselho."],["I've given it my best.","Já dei o meu melhor."],["Gimme a second.","Me dá um segundo."]],
  feel:["sentir(-se)","felt","felt",null,1,["I felt tired after the gym.","Me senti cansado depois da academia."],["I've felt this way before.","Já me senti assim antes."],null],
- run:["correr / acabar","ran","run",null,1,["We ran out of milk again.","O leite acabou de novo."],["I've run five miles today.","Já corri oito km hoje."],null],
- come:["vir","came","come","c'mon",1,["She came over last night.","Ela veio aqui ontem à noite."],["He hasn't come back yet.","Ele ainda não voltou."],["C'mon, we're gonna be late.","Anda, a gente vai se atrasar."]],
+ run:["correr / acabar","ran","run",null,1,["I ran in the park yesterday.","Corri no parque ontem."],["I've run five miles today.","Já corri oito km hoje."],null],
+ come:["vir","came","come","c'mon",1,["She came over last night.","Ela veio aqui ontem à noite."],["She's come here before.","Ela já veio aqui antes."],["C'mon, we're gonna be late.","Anda, a gente vai se atrasar."]],
  call:["ligar / chamar","called","called",null,0,["She called me last night.","Ela me ligou ontem à noite."],["I've called him twice already.","Já liguei pra ele duas vezes."],null],
  know:["saber / conhecer","knew","known",null,1,["I knew it would happen.","Eu sabia que ia acontecer."],["I've known her for years.","Conheço ela há anos."],null],
- take:["pegar / levar","took","taken",null,1,["She took my advice.","Ela seguiu meu conselho."],["He's taken the wrong turn.","Ele pegou o caminho errado."],null],
- make:["fazer","made","made",null,1,["She made a great dinner.","Ela fez um ótimo jantar."],["I've made a decision.","Tomei uma decisão."],null],
+ take:["pegar / levar","took","taken",null,1,["She took my keys.","Ela pegou minhas chaves."],["He's taken the wrong turn.","Ele pegou o caminho errado."],null],
+ make:["fazer","made","made",null,1,["She made a great dinner.","Ela fez um ótimo jantar."],["I've made plans for tonight.","Já fiz planos pra hoje."],null],
  look:["olhar / procurar","looked","looked",null,0,["I looked everywhere for it.","Procurei em todo lugar."],["I've looked at all the options.","Já olhei todas as opções."],null],
  want:["querer","wanted","wanted","wanna",0,["I wanted to call you.","Eu queria te ligar."],["I've always wanted to travel.","Sempre quis viajar."],["I wanna go home.","Quero ir pra casa."]],
  think:["pensar / achar","thought","thought",null,1,["I thought about it a lot.","Pensei muito nisso."],["I've never thought of that.","Nunca pensei nisso."],null],
@@ -401,14 +410,14 @@ const V = {
  work:["trabalhar / funcionar","worked","worked",null,0,["I worked late yesterday.","Trabalhei até tarde ontem."],["It hasn't worked so far.","Não funcionou até agora."],null],
 };
 const REDSRC={go:"going to",let:"let me",get:"got to",need:"need to",give:"give me",come:"come on",want:"want to"};
-const PAST_CUE={go:"fui ontem",let:"permitiu / deixou ontem",get:"consegui ontem",need:"precisei ontem",keep:"guardei ontem",move:"mudaram ontem",give:"entregou / deu ontem",feel:"senti ontem",run:"corri ontem",come:"veio ontem",call:"ligou ontem",know:"soube ontem",take:"levei ontem",make:"fez ontem",look:"procurei ontem",want:"quis ontem",think:"pensei ontem",say:"disse ontem",chill:"relaxei ontem",work:"trabalhei ontem"};
-const PART_CUE={go:"já fui",let:"já deixei",get:"já consegui",need:"já precisei",keep:"mantiveram / já guardei",move:"já mudei",give:"já dei",feel:"já senti",run:"já corri",come:"já veio",call:"já liguei",know:"já conheci",take:"já levei",make:"já fiz",look:"já procurei",want:"sempre quis",think:"já pensei",say:"já disse",chill:"tranquilo / já relaxei",work:"já funcionou"};
-const RED_CUE={go:"vou logo",want:"quero ir",get:"preciso / tenho que",need:"preciso ir",give:"me dá",let:"me deixa",come:"anda logo"};
-const PRES_CUE={go:"ele vai (sempre)",let:"ela deixa (sempre)",get:"ele chega (sempre)",need:"ela precisa (sempre)",keep:"ele continua (sempre)",move:"ela se muda (sempre)",give:"ele dá (sempre)",feel:"ela se sente (hoje)",run:"ele corre (sempre)",come:"ela vem (sempre)",call:"ele liga (sempre)",know:"ela sabe (sempre)",take:"ele pega (sempre)",make:"ela faz (sempre)",look:"ele parece (hoje)",want:"ela quer (agora)",think:"ele acha (agora)",say:"ela diz (sempre)",chill:"ele relaxa (sempre)",work:"ela trabalha (sempre)"};
+const PAST_CUE={go:"fui ontem",let:"deixei ontem",get:"consegui ontem",need:"precisei ontem",keep:"continuei ontem",move:"me mudei ontem",give:"dei ontem",feel:"senti ontem",run:"corri ontem",come:"vim ontem",call:"liguei ontem",know:"soube ontem",take:"peguei ontem",make:"fiz ontem",look:"procurei ontem",want:"quis ontem",think:"pensei ontem",say:"disse ontem",chill:"relaxei ontem",work:"trabalhei ontem"};
+const PART_CUE={go:"já fui",let:"já deixei",get:"já consegui",need:"já precisei",keep:"já guardei",move:"já me mudei",give:"já dei",feel:"já senti",run:"já corri",come:"já vim",call:"já liguei",know:"conheço há anos",take:"já peguei",make:"já fiz",look:"já olhei",want:"já quis",think:"já pensei",say:"já disse",chill:"já relaxei",work:"já funcionou"};
+const RED_CUE={go:"vou fazer amanhã / depois",want:"quero…",get:"tenho que…",need:"preciso…",give:"me dá!",let:"me deixa…",come:"anda, vem logo!"};
+const PRES_CUE={go:"ele vai (sempre)",let:"ela deixa (sempre)",get:"ele consegue (sempre)",need:"ela precisa (agora)",keep:"ele continua (sempre)",move:"ela se muda (sempre)",give:"ele dá (sempre)",feel:"ela se sente (hoje)",run:"ele corre (sempre)",come:"ela vem (sempre)",call:"ele liga (sempre)",know:"ela sabe (sempre)",take:"ele pega (sempre)",make:"ela faz (sempre)",look:"ele olha (sempre)",want:"ela quer (agora)",think:"ele acha (agora)",say:"ela diz (sempre)",chill:"ele relaxa (sempre)",work:"ela trabalha (sempre)"};
 const PRES_EX={
  go:["He goes to the gym every day.","Ele vai à academia todo dia."],
  let:["She lets me use her car.","Ela me deixa usar o carro dela."],
- get:["He gets home late on Fridays.","Ele chega tarde em casa nas sextas."],
+ get:["He always gets what he wants.","Ele sempre consegue o que quer."],
  need:["She needs more time.","Ela precisa de mais tempo."],
  keep:["He keeps calling me.","Ele fica me ligando."],
  move:["She moves a lot for work.","Ela se muda muito por trabalho."],
@@ -420,7 +429,7 @@ const PRES_EX={
  know:["She knows what you mean.","Ela sabe o que você quer dizer."],
  take:["He takes the bus to work.","Ele pega o ônibus pro trabalho."],
  make:["She makes coffee every morning.","Ela faz café toda manhã."],
- look:["He looks tired today.","Ele parece cansado hoje."],
+ look:["He looks at his phone all the time.","Ele olha o celular toda hora."],
  want:["She wants some coffee.","Ela quer um café."],
  think:["He thinks you're right.","Ele acha que você tem razão."],
  say:["She says what she thinks.","Ela fala o que pensa."],
@@ -640,6 +649,13 @@ async function gWriteState(){
   await gFetch(`https://sheets.googleapis.com/v4/spreadsheets/${id}/values/A1?valueInputOption=RAW`,
     {method:"PUT",headers:{"Content-Type":"application/json"}, body:JSON.stringify({values:[[JSON.stringify(S)]]})});
 }
+// pós-adoção de estado remoto: atualiza header/hero e re-renderiza o modo atual.
+// Num treino do dia em andamento, NÃO re-renderiza — setMode("daily") chamaria
+// nextDailyStep(), que avança a fila e pularia a questão aberta na tela.
+function refreshFromRemote(){
+  updStats();
+  if(mode!=="daily"||!daily) setMode(mode);
+}
 async function gSync(){                      // conectar/sincronizar (deve ser chamado por clique = gesto do usuário)
   if(!gReady()){ setSyncStatus(GOOGLE_CLIENT_ID?"carregando Google… tente de novo":"defina GOOGLE_CLIENT_ID no código"); return; }
   try{
@@ -650,7 +666,7 @@ async function gSync(){                      // conectar/sincronizar (deve ser c
     if(remote && remote.it && (!S.updatedAt || (remote.updatedAt||0)>S.updatedAt)){
       S=sanitizeState(remote);               // mesmo vindo da SUA planilha: célula é editável
       try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}
-      updStats(); setMode(mode);
+      refreshFromRemote();
     }
     await gWriteState();                       // empurra o estado mais novo
     localStorage.setItem("jv-gconnected","1");
@@ -767,7 +783,7 @@ function norm(s){return (s||"").toLowerCase().trim().replace(/[.!?,;:]+$/,"").re
 // ============================================================
 // exercício único: pergunta → resposta escrita (todos os itens)
 // ============================================================
-const VERB_INSTR={vpast:"Escreva o PASSADO",vpart:"Escreva o PARTICÍPIO (com have/has)",vpres:"Presente com he/she/it — escreva a forma",vred:"Forma da fala — escreva a reduzida"};
+const VERB_INSTR={vpast:"Passado · ontem / já aconteceu e acabou",vpart:"Particípio passado · “já…” — sempre com have/has",vpres:"Presente · hoje / agora / sempre — he/she/it + s",vred:"Fala rápida · escreva a forma reduzida"};
 // explicação geral de quando/como usar a palavra-alvo — reusa os dados do card de Ajuda
 const SCEN_USE={
  "mustnt":"mustn't = proibição — não pode de jeito nenhum. ≠ don't have to (= não precisa).",
@@ -1109,7 +1125,7 @@ async function statsSyncCheck(){
     if(remote && remote.it && (remote.updatedAt||0)>(S.updatedAt||0)){
       S=sanitizeState(remote);               // mesma regra do gSync: célula é editável, sanear sempre
       try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}
-      updStats(); setMode(mode);
+      refreshFromRemote();
     }
     statsSrc="sheet";
   }catch(e){ statsSrc="local"; }
@@ -1144,6 +1160,18 @@ $("syncClose").onclick=()=>$("sync").classList.remove("show");
 $("sync").addEventListener("click",e=>{if(e.target===$("sync"))$("sync").classList.remove("show");});
 $("gConnect").onclick=()=>gSync();
 $("gDisc").onclick=gDisconnect;
+// reset do UCB/SRS: zera caixas, tentativas e erros de todos os itens.
+// updatedAt de agora garante que o reset vence o merge last-write-wins com a planilha.
+function resetProgress(){
+  if(!confirm("Zerar TODO o progresso (níveis, tentativas, acertos e erros)? Isso não pode ser desfeito."))return;
+  S=sanitizeState({updatedAt:Date.now()});
+  daily=null; streak=0; lastSingle=null;
+  save();                                    // localStorage + planilha (se conectado)
+  updStats();
+  setMode(MODE2CLS[mode]?mode:"verbs");      // sai do treino do dia, se estava nele
+  setSyncStatus("progresso zerado ✓");
+}
+$("gReset").onclick=resetProgress;
 
 // ============================================================
 // abas / modos
