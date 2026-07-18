@@ -1,0 +1,16 @@
+{
+  "name": "Verbs",
+  "short_name": "Verbs",
+  "description": "Treino de verbos e modais em inglês",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#1e1f22",
+  "theme_color": "#1e1f22",
+  "lang": "pt-BR",
+  "icons": [
+    { "src": "app_192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "app_512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}
