@@ -164,6 +164,8 @@
   .fb .sol{font-family:'Inter';font-size:14px;color:var(--ink);margin-top:6px}
   .fb .sol b{font-family:'Space Mono',monospace}
   .fb .why{font-family:'Inter';font-size:12.5px;color:var(--inkc);margin-top:4px;line-height:1.4}
+  .fb .use{font-family:'Inter';font-size:12.5px;color:var(--inkc);margin-top:7px;line-height:1.4}
+  .fb .use .lab{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:var(--green);display:block;margin-bottom:1px}
   .fb .exline{display:flex;align-items:center;gap:9px;margin-top:9px;padding-top:9px;border-top:1px dashed var(--line)}
   .fb .ex{font-family:'Inter';font-size:13px;color:var(--inkc);line-height:1.35}
   .fb .ex i{color:var(--soft)}
@@ -758,31 +760,52 @@ function norm(s){return (s||"").toLowerCase().trim().replace(/[.!?,;:]+$/,"").re
 // exercício único: pergunta → resposta escrita (todos os itens)
 // ============================================================
 const VERB_INSTR={vpast:"Escreva o PASSADO",vpart:"Escreva o PARTICÍPIO (com have/has)",vpres:"Presente com he/she/it — escreva a forma",vred:"Forma da fala — escreva a reduzida"};
+// explicação geral de quando/como usar a palavra-alvo — reusa os dados do card de Ajuda
+const SCEN_USE={
+ "mustnt":"mustn't = proibição — não pode de jeito nenhum. ≠ don't have to (= não precisa).",
+ "dont have to":"don't have to = ausência de obrigação — não precisa, mas pode se quiser. ≠ mustn't (= proibido).",
+ "gonna":"gonna = going to — plano/intenção já decidida antes de falar. will = decisão na hora."
+};
+function usageNote(it){
+  if(it.pool==="verbs") return HELP_VERB[it.base]||null;
+  if(it.pool==="scen"){
+    const m=MODAL_DEFS.find(d=>norm(d.answer)===norm(it.answer));
+    return m?m.use:(SCEN_USE[norm(it.answer)]||null);
+  }
+  if(it.pool==="hhh"){
+    if(/___ to\b/.test(it.s)){const ht=HELP_HHH.find(a=>a.w==="have to / has to");return ht?ht.tip:null;}
+    const k=norm(it.answer).replace(/nt$/,"");   // hasn't→has · haven't→have · hadn't→had
+    const h=HELP_HHH.find(a=>a.w===k);
+    return h?h.tip:null;
+  }
+  return null; // modais: it.use já é a explicação de uso e aparece como why
+}
 function typedSpec(it){
+  const usage=usageNote(it);
   if(it.pool==="scen"){
     const full=it.s.replace("___",it.answer);
     return {instr:"Leia a situação e escreva a resposta",pre:`<div class="scen">🎬 ${it.sc}</div>`,
-      promptHTML:gapHTML(it.s),meaning:it.pt,answer:it.answer,full,fullPt:it.pt,why:it.why,placeholder:"escreva a resposta…"};
+      promptHTML:gapHTML(it.s),meaning:it.pt,answer:it.answer,full,fullPt:it.pt,why:it.why,usage,placeholder:"escreva a resposta…"};
   }
   if(it.pool==="hhh"){
     const full=it.s.replace("___",it.answer);
     return {instr:"have, has ou had? Escreva a forma certa",
-      promptHTML:gapHTML(it.s),meaning:it.pt,answer:it.answer,full,fullPt:it.pt,why:it.why,placeholder:"have / has / had"};
+      promptHTML:gapHTML(it.s),meaning:it.pt,answer:it.answer,full,fullPt:it.pt,why:it.why,usage,placeholder:"have / has / had"};
   }
   if(it.pool==="modals"){
     const full=it.gap[0].replace("___",it.answer);
     return {instr:"Complete — escreva o modal certo",
-      promptHTML:gapHTML(it.gap[0]),meaning:it.gap[1],answer:it.answer,full,fullPt:it.gap[1],why:it.use,placeholder:"escreva o modal…"};
+      promptHTML:gapHTML(it.gap[0]),meaning:it.gap[1],answer:it.answer,full,fullPt:it.gap[1],why:it.use,usage,placeholder:"escreva o modal…"};
   }
   // verbos — dentro da frase quando já dominado; senão, flashcard da forma isolada
   if(verbInSentence(it)){
     const full=it.gap[0].replace("___",it.answer);
     return {instr:"Complete a frase — escreva a forma certa",
-      promptHTML:gapHTML(it.gap[0]),meaning:it.gap[1],answer:it.answer,full,fullPt:it.gap[1],why:it.use,fam:famLine(it),placeholder:"escreva a forma…"};
+      promptHTML:gapHTML(it.gap[0]),meaning:it.gap[1],answer:it.answer,full,fullPt:it.gap[1],why:it.use,usage,fam:famLine(it),placeholder:"escreva a forma…"};
   }
   return {instr:VERB_INSTR[it.kind]||"Escreva a forma em inglês",
     promptHTML:`«${it.cue}»`,
-    answer:it.answer,full:it.ex[0],fullPt:it.ex[1],why:it.use,fam:famLine(it),
+    answer:it.answer,full:it.ex[0],fullPt:it.ex[1],why:it.use,usage,fam:famLine(it),
     map:`<div class="sol">“${it.cue}” → <b>${it.answer}</b> <span style="color:var(--soft)">(${it.base})</span></div>`,
     placeholder:"escreva a forma…"};
 }
@@ -813,7 +836,8 @@ function renderTyped(it,onNext,head){
     fb.innerHTML=`<div class="verdict">${ok?"✓ CERTO!":"✕ QUASE"}</div>
       ${ok?"":`<div class="sol">forma certa: <b>${s.answer}</b></div>`}
       ${s.map||""}
-      <div class="why">${s.why}</div>${s.fam||""}
+      <div class="why">${s.why}</div>
+      ${s.usage?`<div class="use"><span class="lab">quando &amp; como usar</span>${s.usage}</div>`:""}${s.fam||""}
       <div class="exline"><button class="spk" id="espk">${SPK}</button>
         <span class="ex">${s.full}<br><i>${s.fullPt}</i></span></div>`;
     $("espk").onclick=()=>speak(s.full);
