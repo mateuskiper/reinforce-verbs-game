@@ -1,6 +1,6 @@
 // Incrementar a versão a cada deploy que altere index.html ou assets —
 // é o que descarta o cache antigo nos aparelhos dos usuários.
-const VERSION = 'v2';
+const VERSION = 'v3';
 const CACHE = `nptl-${VERSION}`;
 const FONT_CACHE = 'nptl-fonts';
 
