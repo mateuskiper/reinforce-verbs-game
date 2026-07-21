@@ -119,7 +119,6 @@
   .learn .exline{display:flex;align-items:center;gap:9px;margin-top:8px;padding-top:8px;border-top:1px dashed var(--line)}
   .learn .ex{font-family:'Inter';font-size:13px;color:var(--inkc);line-height:1.35}
   .learn .ex i{color:var(--soft)}
-  .famline{font-family:'Space Mono',monospace;font-size:11px;margin-top:7px;line-height:1.5}
 
   .spk{flex-shrink:0;width:32px;height:32px;border-radius:9px;border:1.5px solid var(--ink);background:transparent;
     color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s}
@@ -168,15 +167,37 @@
   .fb.show{display:block;animation:pop .2s ease}
   .fb.ok{background:rgba(45,199,112,.12);border:1px solid rgba(45,199,112,.35)}
   .fb.no{background:rgba(242,63,67,.12);border:1px solid rgba(242,63,67,.35)}
-  .fb .verdict{font-family:'Space Mono',monospace;font-weight:700;font-size:13px;letter-spacing:.04em}
+  /* linha 1: veredito + a palavra em destaque (+ o que foi digitado, se errou) */
+  .fb .vrow{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap}
+  .fb .verdict{font-family:'Space Mono',monospace;font-weight:700;font-size:11px;letter-spacing:.08em}
   .fb.ok .verdict{color:var(--green)}
   .fb.no .verdict{color:var(--redl)}
-  .fb .sol{font-family:'Inter';font-size:14px;color:var(--ink);margin-top:6px}
-  .fb .sol b{font-family:'Space Mono',monospace}
-  .fb .why{font-family:'Inter';font-size:12.5px;color:var(--inkc);margin-top:4px;line-height:1.4}
-  .fb .use{font-family:'Inter';font-size:12.5px;color:var(--inkc);margin-top:7px;line-height:1.4}
-  .fb .use .lab{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:var(--green);display:block;margin-bottom:1px}
-  .fb .exline{display:flex;align-items:center;gap:9px;margin-top:9px;padding-top:9px;border-top:1px dashed var(--line)}
+  .fb .word{font-family:'Space Mono',monospace;font-weight:700;font-size:21px;color:var(--ink);line-height:1.1}
+  .fb .typed{font-family:'Space Mono',monospace;font-size:11px;color:var(--soft);text-decoration:line-through}
+  /* significado em português */
+  .fb .sense{font-family:'Inter';font-size:13px;color:var(--corald);margin-top:1px}
+  /* tira de conjugação: base · +s · passado · particípio, com a forma treinada acesa */
+  .fb .strip{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+  .fb .strip .slot{flex:1 1 auto;min-width:62px;background:var(--bg2);border:1px solid transparent;
+    border-radius:9px;padding:5px 7px;text-align:center}
+  .fb .strip .slot.on{border-color:var(--corald);background:rgba(148,156,247,.14)}
+  .fb .strip .sl{display:block;font-family:'Space Mono',monospace;font-size:8.5px;letter-spacing:.07em;
+    text-transform:uppercase;color:var(--soft);margin-bottom:1px}
+  .fb .strip .slot.on .sl{color:var(--corald)}
+  .fb .strip b{font-family:'Space Mono',monospace;font-size:12.5px;color:var(--ink)}
+  .fb .strip .on+.arrow{color:var(--soft)}
+  .fb .strip .arrow{align-self:center;color:var(--soft);font-size:13px}
+  .fb .strip>b.on{font-family:'Space Mono',monospace;font-size:13px;color:var(--ink);
+    background:var(--bg2);border-radius:9px;padding:5px 9px}
+  .fb .famtag{display:inline-block;font-family:'Space Mono',monospace;font-size:9.5px;letter-spacing:.05em;
+    border:1px solid;border-radius:99px;padding:1px 7px;margin-top:7px;opacity:.85}
+  /* quando (tempo verbal) e como (padrão/phrasal) — rótulo fixo à esquerda */
+  .fb .r{display:flex;gap:8px;margin-top:8px;align-items:baseline}
+  .fb .r .lab{flex:0 0 46px;font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.09em;
+    text-transform:uppercase;color:var(--green);padding-top:2px}
+  .fb.no .r .lab{color:var(--gold)}
+  .fb .r .txt{flex:1;font-family:'Inter';font-size:12.5px;color:var(--inkc);line-height:1.4}
+  .fb .exline{display:flex;align-items:center;gap:9px;margin-top:10px;padding-top:9px;border-top:1px dashed var(--line)}
   .fb .ex{font-family:'Inter';font-size:13px;color:var(--inkc);line-height:1.35}
   .fb .ex i{color:var(--soft)}
   #next{width:100%;margin-top:12px;font-family:'Inter';font-weight:700;font-size:16px;color:#fff;
@@ -299,7 +320,7 @@
 </head>
 <body>
 <div class="wrap">
-  <div class="kicker">Treino ativo · 20 verbos · modais · have/has/had</div>
+  <div class="kicker">Treino ativo · 40 verbos · modais · have/has/had</div>
   <h1>Na ponta da <em>língua</em></h1>
 
   <div class="stats statrow-prog">
@@ -408,12 +429,32 @@ const V = {
  say:["dizer / falar","said","said",null,1,["She said she'd help.","Ela disse que ia ajudar."],["I've said too much.","Falei demais."],null],
  chill:["relaxar (gíria)","chilled","chilled",null,0,["We chilled at home.","A gente relaxou em casa."],["I have chilled at home all weekend.","Relaxei em casa o fim de semana todo."],null],
  work:["trabalhar / funcionar","worked","worked",null,0,["I worked late yesterday.","Trabalhei até tarde ontem."],["It hasn't worked so far.","Não funcionou até agora."],null],
+ eat:["comer","ate","eaten",null,1,["I ate too much at lunch.","Comi demais no almoço."],["I've already eaten.","Já comi."],null],
+ see:["ver / entender","saw","seen",null,1,["I saw her at the store.","Eu a vi na loja."],["I've seen that movie twice.","Já vi esse filme duas vezes."],null],
+ find:["achar / encontrar","found","found",null,1,["I found my keys.","Achei minhas chaves."],["She has found a new job.","Ela encontrou um emprego novo."],null],
+ grab:["pegar (rápido)","grabbed","grabbed",null,0,["He grabbed his jacket and left.","Ele pegou a jaqueta e saiu."],["I've grabbed a coffee already.","Já peguei um café."],null],
+ ask:["perguntar / pedir","asked","asked",null,0,["She asked me about you.","Ela perguntou de você."],["I've asked him three times.","Já pedi pra ele três vezes."],null],
+ hang:["pendurar / sair (com alguém)","hung","hung",null,1,["We hung out all weekend.","A gente saiu junto o fim de semana todo."],["I've hung the picture on the wall.","Pendurei o quadro na parede."],null],
+ pick:["escolher / pegar","picked","picked",null,0,["I picked the red one.","Escolhi o vermelho."],["He has picked me up before.","Ele já foi me buscar antes."],null],
+ put:["colocar / pôr","put","put",null,1,["I put the money in the bank.","Coloquei o dinheiro no banco."],["She has put it back already.","Ela já colocou de volta."],null],
+ tell:["contar / dizer (a alguém)","told","told",null,1,["He told me the truth.","Ele me contou a verdade."],["I've told you before.","Já te falei antes."],null],
+ catch:["pegar / alcançar","caught","caught",null,1,["I caught the last bus.","Peguei o último ônibus."],["He has caught a cold.","Ele pegou um resfriado."],null],
+ hit:["bater / acertar","hit","hit",null,1,["The car hit a pole.","O carro bateu num poste."],["We've hit a problem.","A gente esbarrou num problema."],null],
+ use:["usar","used","used",null,0,["I used your charger.","Usei seu carregador."],["I've used this app for years.","Uso esse app há anos."],null],
+ hear:["ouvir / escutar","heard","heard",null,1,["I heard a noise outside.","Ouvi um barulho lá fora."],["I've heard that song before.","Já ouvi essa música antes."],null],
+ meet:["conhecer / encontrar","met","met",null,1,["I met her last year.","Conheci ela ano passado."],["We've met before, right?","A gente já se conheceu, né?"],null],
+ mess:["bagunçar / estragar","messed","messed",null,0,["I messed up the recipe.","Estraguei a receita."],["You've messed everything up.","Você estragou tudo."],null],
+ check:["conferir / verificar","checked","checked",null,0,["I checked my email this morning.","Conferi meu e-mail hoje de manhã."],["I've checked it twice.","Já conferi duas vezes."],null],
+ drop:["derrubar / largar","dropped","dropped",null,0,["She dropped her phone.","Ela derrubou o celular."],["He has dropped the class.","Ele largou a matéria."],null],
+ figure:["descobrir / entender","figured","figured",null,0,["I figured it out on my own.","Descobri sozinho."],["I've figured out the problem.","Já entendi o problema."],null],
+ talk:["conversar / falar","talked","talked",null,0,["We talked for hours.","A gente conversou por horas."],["I've talked to her about it.","Já falei com ela sobre isso."],null],
+ hold:["segurar / esperar","held","held",null,1,["She held my hand.","Ela segurou minha mão."],["I've held this seat for you.","Guardei esse lugar pra você."],null],
 };
 const REDSRC={go:"going to",let:"let me",get:"got to",need:"need to",give:"give me",come:"come on",want:"want to"};
-const PAST_CUE={go:"fui ontem",let:"deixei ontem",get:"consegui / peguei ontem",need:"precisei ontem",keep:"continuei / mantive ontem",move:"me mudei / movi ontem",give:"dei ontem",feel:"senti ontem",run:"corri / acabou ontem",come:"vim ontem",call:"liguei / chamei ontem",know:"soube / conheci ontem",take:"peguei / levei ontem",make:"fiz ontem",look:"olhei / procurei ontem",want:"quis ontem",think:"pensei / achei ontem",say:"disse / falei ontem",chill:"relaxei ontem",work:"trabalhei / funcionou ontem"};
-const PART_CUE={go:"já fui",let:"já deixei",get:"já consegui / peguei",need:"já precisei",keep:"já continuei / mantive",move:"já me mudei / movi",give:"já dei",feel:"já senti",run:"já corri / acabou",come:"já vim",call:"já liguei / chamei",know:"já soube / conheci",take:"já peguei / levei",make:"já fiz",look:"já olhei / procurei",want:"já quis",think:"já pensei / achei",say:"já disse / falei",chill:"já relaxei",work:"já trabalhei / funcionou"};
+const PAST_CUE={go:"fui ontem",let:"deixei ontem",get:"consegui / peguei ontem",need:"precisei ontem",keep:"continuei / mantive ontem",move:"me mudei / movi ontem",give:"dei ontem",feel:"senti ontem",run:"corri / acabou ontem",come:"vim ontem",call:"liguei / chamei ontem",know:"soube / conheci ontem",take:"peguei / levei ontem",make:"fiz ontem",look:"olhei / procurei ontem",want:"quis ontem",think:"pensei / achei ontem",say:"disse / falei ontem",chill:"relaxei ontem",work:"trabalhei / funcionou ontem",eat:"comi ontem",see:"vi ontem",find:"achei ontem",grab:"peguei (rápido) ontem",ask:"perguntei / pedi ontem",hang:"pendurei / saí com alguém ontem",pick:"escolhi / peguei ontem",put:"coloquei ontem",tell:"contei ontem",catch:"peguei / alcancei ontem",hit:"bati / acertei ontem",use:"usei ontem",hear:"ouvi ontem",meet:"conheci / encontrei ontem",mess:"baguncei / estraguei ontem",check:"conferi ontem",drop:"derrubei / larguei ontem",figure:"descobri / entendi ontem",talk:"conversei ontem",hold:"segurei ontem"};
+const PART_CUE={go:"já fui",let:"já deixei",get:"já consegui / peguei",need:"já precisei",keep:"já continuei / mantive",move:"já me mudei / movi",give:"já dei",feel:"já senti",run:"já corri / acabou",come:"já vim",call:"já liguei / chamei",know:"já soube / conheci",take:"já peguei / levei",make:"já fiz",look:"já olhei / procurei",want:"já quis",think:"já pensei / achei",say:"já disse / falei",chill:"já relaxei",work:"já trabalhei / funcionou",eat:"já comi",see:"já vi",find:"já achei",grab:"já peguei (rápido)",ask:"já perguntei / pedi",hang:"já pendurei / saí com alguém",pick:"já escolhi / peguei",put:"já coloquei",tell:"já contei",catch:"já peguei / alcancei",hit:"já bati / acertei",use:"já usei",hear:"já ouvi",meet:"já conheci / encontrei",mess:"já baguncei / estraguei",check:"já conferi",drop:"já derrubei / larguei",figure:"já descobri / entendi",talk:"já conversei",hold:"já segurei"};
 const RED_CUE={go:"vou fazer amanhã / depois",want:"quero…",get:"tenho que…",need:"preciso…",give:"me dá!",let:"me deixa…",come:"anda, vem logo!"};
-const PRES_CUE={go:"ele vai (sempre)",let:"ela deixa (sempre)",get:"ele consegue / pega (sempre)",need:"ela precisa (agora)",keep:"ele continua / mantém (sempre)",move:"ela se muda / move (sempre)",give:"ele dá (sempre)",feel:"ela se sente (hoje)",run:"ele corre / acaba (sempre)",come:"ela vem (sempre)",call:"ele liga / chama (sempre)",know:"ela sabe / conhece (sempre)",take:"ele pega / leva (sempre)",make:"ela faz (sempre)",look:"ele olha / procura (sempre)",want:"ela quer (agora)",think:"ele acha / pensa (agora)",say:"ela diz / fala (sempre)",chill:"ele relaxa (sempre)",work:"ela trabalha / funciona (sempre)"};
+const PRES_CUE={go:"ele vai (sempre)",let:"ela deixa (sempre)",get:"ele consegue / pega (sempre)",need:"ela precisa (agora)",keep:"ele continua / mantém (sempre)",move:"ela se muda / move (sempre)",give:"ele dá (sempre)",feel:"ela se sente (hoje)",run:"ele corre / acaba (sempre)",come:"ela vem (sempre)",call:"ele liga / chama (sempre)",know:"ela sabe / conhece (sempre)",take:"ele pega / leva (sempre)",make:"ela faz (sempre)",look:"ele olha / procura (sempre)",want:"ela quer (agora)",think:"ele acha / pensa (agora)",say:"ela diz / fala (sempre)",chill:"ele relaxa (sempre)",work:"ela trabalha / funciona (sempre)",eat:"ele come (sempre)",see:"ela vê (sempre)",find:"ele acha / encontra (sempre)",grab:"ela pega (agora)",ask:"ele pergunta / pede (sempre)",hang:"ela pendura / sai com a gente (sempre)",pick:"ele escolhe / pega (sempre)",put:"ela coloca (sempre)",tell:"ele conta / diz (sempre)",catch:"ela pega / alcança (sempre)",hit:"ele bate / acerta (sempre)",use:"ela usa (sempre)",hear:"ele ouve (agora)",meet:"ela conhece / encontra (sempre)",mess:"ele bagunça / estraga (sempre)",check:"ela confere (sempre)",drop:"ele derruba / larga (sempre)",figure:"ela descobre / entende (sempre)",talk:"ele conversa / fala (sempre)",hold:"ela segura (agora)"};
 const PRES_EX={
  go:["He goes to the gym every day.","Ele vai à academia todo dia."],
  let:["She lets me use her car.","Ela me deixa usar o carro dela."],
@@ -434,25 +475,47 @@ const PRES_EX={
  think:["He thinks you're right.","Ele acha que você tem razão."],
  say:["She says what she thinks.","Ela fala o que pensa."],
  chill:["He just chills on weekends.","Ele só relaxa nos fins de semana."],
- work:["She works from home.","Ela trabalha de casa."]};
-const WRONGREG={go:"goed",get:"getted",let:"letted",keep:"keeped",give:"gived",feel:"feeled",run:"runned",come:"comed",know:"knowed",take:"taked",make:"maked",think:"thinked",say:"sayed"};
-const ING={go:"going",let:"letting",get:"getting",need:"needing",keep:"keeping",move:"moving",give:"giving",feel:"feeling",run:"running",come:"coming",call:"calling",know:"knowing",take:"taking",make:"making",look:"looking",want:"wanting",think:"thinking",say:"saying",chill:"chilling",work:"working"};
+ work:["She works from home.","Ela trabalha de casa."],
+ eat:["He eats lunch at noon.","Ele almoça ao meio-dia."],
+ see:["She sees the problem now.","Ela está vendo o problema agora."],
+ find:["He always finds a way.","Ele sempre dá um jeito."],
+ grab:["She grabs a coffee every morning.","Ela pega um café toda manhã."],
+ ask:["He asks a lot of questions.","Ele faz muitas perguntas."],
+ hang:["She hangs out with us on Fridays.","Ela sai com a gente nas sextas."],
+ pick:["He picks his son up at five.","Ele busca o filho às cinco."],
+ put:["She puts her keys on the table.","Ela põe as chaves na mesa."],
+ tell:["He tells the same story every time.","Ele conta a mesma história sempre."],
+ catch:["She catches the bus at seven.","Ela pega o ônibus às sete."],
+ hit:["He hits the gym after work.","Ele vai pra academia depois do trabalho."],
+ use:["She uses her phone for everything.","Ela usa o celular pra tudo."],
+ hear:["He hears you just fine.","Ele te ouve muito bem."],
+ meet:["She meets new people every week.","Ela conhece gente nova toda semana."],
+ mess:["He messes everything up.","Ele estraga tudo."],
+ check:["She checks her email every hour.","Ela confere o e-mail de hora em hora."],
+ drop:["He drops the kids off at school.","Ele deixa as crianças na escola."],
+ figure:["She figures things out fast.","Ela entende as coisas rápido."],
+ talk:["He talks to his brother every day.","Ele conversa com o irmão todo dia."],
+ hold:["She holds the door for everyone.","Ela segura a porta pra todo mundo."]};
+const WRONGREG={go:"goed",get:"getted",let:"letted",keep:"keeped",give:"gived",feel:"feeled",run:"runned",come:"comed",know:"knowed",take:"taked",make:"maked",think:"thinked",say:"sayed",
+ eat:"eated",see:"seed",find:"finded",hang:"hanged",put:"putted",tell:"telled",catch:"catched",hit:"hitted",hear:"heared",meet:"meeted",hold:"holded"};
+const ING={go:"going",let:"letting",get:"getting",need:"needing",keep:"keeping",move:"moving",give:"giving",feel:"feeling",run:"running",come:"coming",call:"calling",know:"knowing",take:"taking",make:"making",look:"looking",want:"wanting",think:"thinking",say:"saying",chill:"chilling",work:"working",
+ eat:"eating",see:"seeing",find:"finding",grab:"grabbing",ask:"asking",hang:"hanging",pick:"picking",put:"putting",tell:"telling",catch:"catching",hit:"hitting",use:"using",hear:"hearing",meet:"meeting",mess:"messing",check:"checking",drop:"dropping",figure:"figuring",talk:"talking",hold:"holding"};
 const REDLIST=["gonna","lemme","gotta","needa","gimme","c'mon","wanna"];
 
 // famílias de irregulares (chunking por padrão)
 const FAM={
- reg:{label:"Regulares -ed",color:"#2dc770",tip:"passado e particípio: é só somar -ed",members:["need","move","call","look","want","chill","work"]},
- abb:{label:"2× igual",color:"#f0b232",tip:"passado = particípio — uma forma só pra decorar",members:["keep","feel","make","think","say"]},
- abc:{label:"Muda tudo",color:"#f23f43",tip:"três formas diferentes — os que mais derrubam",members:["go","get","give","know","take"]},
+ reg:{label:"Regulares -ed",color:"#2dc770",tip:"passado e particípio: é só somar -ed",members:["need","move","call","look","want","chill","work","grab","ask","pick","use","mess","check","drop","figure","talk"]},
+ abb:{label:"2× igual",color:"#f0b232",tip:"passado = particípio — uma forma só pra decorar",members:["keep","feel","make","think","say","find","hang","tell","catch","hear","meet","hold"]},
+ abc:{label:"Muda tudo",color:"#f23f43",tip:"três formas diferentes — os que mais derrubam",members:["go","get","give","know","take","eat","see"]},
  aba:{label:"Vai e volta",color:"#949cf7",tip:"o particípio volta a ser igual ao presente",members:["run","come"]},
- aaa:{label:"Invariável",color:"#00a8fc",tip:"nunca muda: let · let · let",members:["let"]}
+ aaa:{label:"Invariável",color:"#00a8fc",tip:"nunca muda: let · let · let",members:["let","put","hit"]}
 };
 const FAM_OF={}; for(const f in FAM) FAM[f].members.forEach(m=>FAM_OF[m]=f);
 
 // ============================================================
 // construção dos itens
 // ============================================================
-function pres3(k){return k==="go"?"goes":k+"s";}
+function pres3(k){ if(k==="go")return"goes"; return /(s|x|z|ch|sh)$/.test(k)?k+"es":k+"s"; }
 function gapFrom(ex,answer){
   const re=new RegExp("\\b"+answer.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"\\b","i");
   if(!re.test(ex[0])) return null;
@@ -769,11 +832,17 @@ const SPK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wid
 // ============================================================
 // helpers de conteúdo
 // ============================================================
-function famLine(it){
-  if(!it.fam||(it.kind!=="vpast"&&it.kind!=="vpart"))return "";
-  const f=FAM[it.fam], idx=it.kind==="vpast"?1:2;
-  const forms=f.members.map(m=>V[m][idx]);
-  return `<div class="famline" style="color:${f.color}">⬢ ${f.label}: ${[...new Set(forms)].join(" · ")}</div>`;
+// tira de conjugação: as 4 formas do verbo com a que acabou de ser treinada em destaque.
+// Vale mais que listar os irmãos da família — mostra o verbo inteiro de relance.
+function formStrip(it){
+  const k=it.base, d=V[k]; if(!d)return "";
+  if(it.kind==="vred") return `<div class="strip"><b class="on">${REDSRC[k]}</b><span class="arrow">→</span><b class="on">${d[3]}</b></div>`;
+  const slots=[["base",k,"vbase"],["+s",pres3(k),"vpres"],["passado",d[1],"vpast"],["particípio",d[2],"vpart"]];
+  const cells=slots.map(([lab,form,kind])=>
+    `<div class="slot${kind===it.kind?" on":""}"><span class="sl">${lab}</span><b>${form}</b></div>`).join("");
+  const f=FAM[FAM_OF[k]];   // pela raiz, não pelo item: só vpast/vpart carregam it.fam
+  return `<div class="strip">${cells}</div>`+
+    (f?`<div class="famtag" style="color:${f.color};border-color:${f.color}">⬢ ${f.label}</div>`:"");
 }
 function gapHTML(s,hint){
   return s.replace("___",'<span class="gapx">&nbsp;&nbsp;&nbsp;&nbsp;</span>')+(hint?` <span class="hint">${hint}</span>`:"");
@@ -804,34 +873,33 @@ function usageNote(it){
   }
   return null; // modais: it.use já é a explicação de uso e aparece como why
 }
+// O card de resposta é sempre o mesmo esqueleto: significado → formas → quando → como → exemplo.
 function typedSpec(it){
   const usage=usageNote(it);
   if(it.pool==="scen"){
     const full=it.s.replace("___",it.answer);
     return {instr:"Leia a situação e escreva a resposta",pre:`<div class="scen">🎬 ${it.sc}</div>`,
-      promptHTML:gapHTML(it.s),meaning:it.pt,answer:it.answer,full,fullPt:it.pt,why:it.why,usage,placeholder:"escreva a resposta…"};
+      promptHTML:gapHTML(it.s),meaning:it.pt,answer:it.answer,full,fullPt:it.pt,when:it.why,how:usage,placeholder:"escreva a resposta…"};
   }
   if(it.pool==="hhh"){
     const full=it.s.replace("___",it.answer);
     return {instr:"have, has ou had? Escreva a forma certa",
-      promptHTML:gapHTML(it.s),meaning:it.pt,answer:it.answer,full,fullPt:it.pt,why:it.why,usage,placeholder:"have / has / had"};
+      promptHTML:gapHTML(it.s),meaning:it.pt,answer:it.answer,full,fullPt:it.pt,when:it.why,how:usage,placeholder:"have / has / had"};
   }
   if(it.pool==="modals"){
     const full=it.gap[0].replace("___",it.answer);
     return {instr:"Complete — escreva o modal certo",
-      promptHTML:gapHTML(it.gap[0]),meaning:it.gap[1],answer:it.answer,full,fullPt:it.gap[1],why:it.use,usage,placeholder:"escreva o modal…"};
+      promptHTML:gapHTML(it.gap[0]),meaning:it.gap[1],answer:it.answer,full,fullPt:it.gap[1],when:it.use,how:usage,placeholder:"escreva o modal…"};
   }
   // verbos — dentro da frase quando já dominado; senão, flashcard da forma isolada
+  const vb={sense:V[it.base]?V[it.base][0]:"",strip:formStrip(it),when:it.use,how:PATTERN[it.base]||usage};
   if(verbInSentence(it)){
     const full=it.gap[0].replace("___",it.answer);
-    return {instr:"Complete a frase — escreva a forma certa",
-      promptHTML:gapHTML(it.gap[0]),meaning:it.gap[1],answer:it.answer,full,fullPt:it.gap[1],why:it.use,usage,fam:famLine(it),placeholder:"escreva a forma…"};
+    return {...vb,instr:"Complete a frase — escreva a forma certa",
+      promptHTML:gapHTML(it.gap[0]),meaning:it.gap[1],answer:it.answer,full,fullPt:it.gap[1],placeholder:"escreva a forma…"};
   }
-  return {instr:VERB_INSTR[it.kind]||"Escreva a forma em inglês",
-    promptHTML:`«${it.cue}»`,
-    answer:it.answer,full:it.ex[0],fullPt:it.ex[1],why:it.use,usage,fam:famLine(it),
-    map:`<div class="sol">“${it.cue}” → <b>${it.answer}</b> <span style="color:var(--soft)">(${it.base})</span></div>`,
-    placeholder:"escreva a forma…"};
+  return {...vb,instr:VERB_INSTR[it.kind]||"Escreva a forma em inglês",
+    promptHTML:`«${it.cue}»`,answer:it.answer,full:it.ex[0],fullPt:it.ex[1],placeholder:"escreva a forma…"};
 }
 function renderTyped(it,onNext,head){
   const s=typedSpec(it);
@@ -857,11 +925,15 @@ function renderTyped(it,onNext,head){
     speak(s.full);
     const fb=$("fb");
     fb.className="fb "+(ok?"ok":"no")+" show";
-    fb.innerHTML=`<div class="verdict">${ok?"✓ CERTO!":"✕ QUASE"}</div>
-      ${ok?"":`<div class="sol">forma certa: <b>${s.answer}</b></div>`}
-      ${s.map||""}
-      <div class="why">${s.why}</div>
-      ${s.usage?`<div class="use"><span class="lab">quando &amp; como usar</span>${s.usage}</div>`:""}${s.fam||""}
+    fb.innerHTML=`<div class="vrow">
+        <span class="verdict">${ok?"✓ CERTO":"✕ QUASE"}</span>
+        <span class="word">${s.answer}</span>
+        ${ok?"":`<span class="typed">você escreveu ${val.trim()}</span>`}
+      </div>
+      ${s.sense?`<div class="sense">${s.sense}</div>`:""}
+      ${s.strip||""}
+      ${s.when?`<div class="r"><span class="lab">quando</span><span class="txt">${s.when}</span></div>`:""}
+      ${s.how?`<div class="r"><span class="lab">como</span><span class="txt">${s.how}</span></div>`:""}
       <div class="exline"><button class="spk" id="espk">${SPK}</button>
         <span class="ex">${s.full}<br><i>${s.fullPt}</i></span></div>`;
     $("espk").onclick=()=>speak(s.full);
@@ -962,7 +1034,7 @@ function openAlbum(){
       <div class="tip">${fam.tip}</div>
       <div class="chips">${chips}</div></div>`;
   }
-  $("albSub").textContent=`${done} de 20 verbos dominados (✓ = passado e particípio na caixa alta)`;
+  $("albSub").textContent=`${done} de ${Object.keys(V).length} verbos dominados (✓ = passado e particípio na caixa alta)`;
   $("albBody").innerHTML=html;
   $("album").classList.add("show");
 }
@@ -993,7 +1065,71 @@ const HELP_VERB={
  think:"thought / thought (soa “thót”; nunca “thinked”).",
  say:"said / said (soa “sed”; says soa “sez”). say = dizer algo; tell = contar a alguém.",
  chill:"Gíria informal — evite em textos formais. chill out = se acalmar.",
- work:"Regular (+ed), com dois sentidos: trabalhar e funcionar (“It works!”)."
+ work:"Regular (+ed), com dois sentidos: trabalhar e funcionar (“It works!”).",
+ eat:"ate / eaten (nunca “eated”). ate soa “êit”. eat out = comer fora.",
+ see:"saw / seen (nunca “I have saw”). Também significa entender: “I see” = entendi.",
+ find:"found / found. Não confunda com found (fundar). find out = descobrir uma informação.",
+ grab:"Regular, mas dobra o b: grabbed. É pegar rápido/informal — “grab a beer”.",
+ ask:"Regular (+ed). ask for = pedir algo; ask about = perguntar sobre. Nunca “ask to me”.",
+ hang:"hung / hung. hang out = sair/passar tempo com alguém. (hanged só pra enforcamento.)",
+ pick:"Regular (+ed). pick = escolher; pick up = pegar/buscar alguém ou aprender algo.",
+ put:"Invariável: put / put / put — nunca “putted”. put off = adiar; put up with = aturar.",
+ tell:"told / told. tell precisa de quem ouve (tell me), say não (say something).",
+ catch:"caught / caught (soa “kót”, igual a thought). He catches leva -es.",
+ hit:"Invariável: hit / hit / hit. hit the gym = ir pra academia.",
+ use:"Regular, só soma -d: used. used to = costumava (hábito no passado).",
+ hear:"heard / heard (soa “rêrd”). hear = ouvir sem querer; listen = escutar de propósito.",
+ meet:"met / met (um t só no passado). meet = conhecer alguém pela 1ª vez ou encontrar.",
+ mess:"Regular (+ed). he messes leva -es. mess up = estragar; mess with = mexer com.",
+ check:"Regular (+ed). check out = dar uma olhada / fazer check-out.",
+ drop:"Regular, mas dobra o p: dropped. drop off = deixar alguém; drop out = largar.",
+ figure:"Regular, só soma -d: figured. Quase sempre com out: figure out = sacar/descobrir.",
+ talk:"Regular (+ed). talk to/with alguém, talk about algo. talk = conversa de mão dupla.",
+ hold:"held / held (nunca “holded”). hold on = espera aí; hold up = atrasar/segurar."
+};
+// fórmula curta de uso — o "como usar" do card de resposta.
+// Prosa fica no card de Ajuda (HELP_VERB); aqui é só o padrão + o phrasal mais frequente.
+const PATTERN={
+ go:"go to + lugar · go + -ing: go running",
+ let:"let + alguém + verbo base: let me know",
+ get:"get + coisa = conseguir · get + adjetivo: get tired",
+ need:"need to + verbo · need + coisa",
+ keep:"keep + -ing = continuar: keep trying",
+ move:"move to + cidade · move + coisa de lugar",
+ give:"give + alguém + coisa: give me a hand",
+ feel:"feel + adjetivo: feel tired · feel like + -ing = estar a fim",
+ run:"run + distância · run out of = ficar sem",
+ come:"come over = vir aqui · come from = ser de",
+ call:"call + alguém, sem to: call me · call back = retornar",
+ know:"know + coisa/pessoa · know how to = saber fazer",
+ take:"take + tempo: it takes 5 min · take a shower / the bus",
+ make:"make + coisa criada: make coffee, make a decision",
+ look:"look at = olhar · look for = procurar · look like = parecer",
+ want:"want to + verbo · want + coisa",
+ think:"think about = pensar em · think that = achar que",
+ say:"say + algo: say it · nunca “say me”",
+ chill:"chill = relaxar · chill out = se acalmar",
+ work:"work at/for + empresa · work on = trabalhar em algo",
+ eat:"eat + comida · eat out = comer fora",
+ see:"see + coisa/pessoa · “I see” = entendi",
+ find:"find + coisa perdida · find out = descobrir informação",
+ grab:"grab + coisa rápida: grab a coffee, grab your stuff",
+ ask:"ask + alguém, sem to · ask for = pedir · ask about = perguntar sobre",
+ hang:"hang out with = sair com · hang on = espera aí",
+ pick:"pick = escolher · pick up = buscar alguém / aprender",
+ put:"put + coisa + lugar: put it on the table · put off = adiar",
+ tell:"tell + alguém + algo: tell me · nunca “tell to me”",
+ catch:"catch the bus/ball · catch a cold · catch up = pôr em dia",
+ hit:"hit + coisa · hit the gym / the road = ir pra…",
+ use:"use + coisa · used to + verbo = costumava",
+ hear:"hear + som, sem querer · hear from = ter notícias de",
+ meet:"meet + pessoa (1ª vez) · meet up with = encontrar",
+ mess:"mess up = estragar · mess with = mexer com",
+ check:"check + algo · check out = dar uma olhada",
+ drop:"drop + coisa = derrubar · drop off = deixar alguém",
+ figure:"figure out = sacar/descobrir — quase sempre com out",
+ talk:"talk to/with + pessoa · talk about + assunto",
+ hold:"hold + coisa · hold on = espera aí · hold up = atrasar"
 };
 const HELP_AUX=[
  {w:"be",tr:"ser / estar",forms:"pres am · is · are | pass was · were | part been",
@@ -1021,7 +1157,7 @@ const HELP_HHH=[
   ex:["I have to go now. · He has to work on Saturdays.","Tenho que ir agora. · Ele tem que trabalhar aos sábados."]}
 ];
 const HELP_CLASSES=[
- {key:"verbos",label:"Verbos",sub:"Os 20 verbos mais frequentes — sentido e todas as formas"},
+ {key:"verbos",label:"Verbos",sub:"Os 40 verbos mais frequentes — sentido e todas as formas"},
  {key:"modais",label:"Modais",sub:"Cada modal tem seu próprio sentido — depois dele, verbo na base"},
  {key:"aux",label:"Auxiliares",sub:"be · have · do — os três “verbos de apoio” do inglês"},
  {key:"hhh",label:"have · has · had",sub:"Qual forma usar com cada sujeito"}
