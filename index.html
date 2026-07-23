@@ -56,6 +56,8 @@
   .flame{color:var(--gold)}
   button.stat{cursor:pointer;transition:.15s}
   button.stat:hover{border-color:var(--btn2)}
+  button.stat.unsynced{color:var(--redl);border-color:var(--red);background:rgba(242,63,67,.12)}
+  button.stat.unsynced:hover{border-color:var(--redl)}
 
   /* hero: treino do dia */
   .hero{width:100%;margin-bottom:10px;font-family:'Archivo',sans-serif;font-weight:900;font-size:17px;color:#fff;
@@ -74,6 +76,7 @@
   .tab.on-verbs{background:var(--teal);border-color:var(--teal);color:#fff}
   .tab.on-modals{background:var(--violet);border-color:var(--violet);color:#fff}
   .tab.on-hhh{background:var(--gold);border-color:var(--gold);color:#1e1f22}
+  .tab.on-be{background:#00a8fc;border-color:#00a8fc;color:#fff}
 
   .card{background:var(--paper);color:var(--ink);border-radius:var(--r);overflow:hidden;
     box-shadow:0 22px 46px -22px rgba(0,0,0,.75);border:1px solid var(--edge);min-height:340px;display:flex;flex-direction:column}
@@ -82,6 +85,7 @@
   .ribbon.verbs{background:var(--teal)}
   .ribbon.modals{background:var(--violet)}
   .ribbon.hhh{background:var(--gold);color:#1e1f22}
+  .ribbon.be{background:#00a8fc}
   .ribbon.daily{background:linear-gradient(90deg,var(--coral),var(--violet))}
   .body{padding:14px 14px 16px;flex:1;display:flex;flex-direction:column}
 
@@ -320,7 +324,7 @@
 </head>
 <body>
 <div class="wrap">
-  <div class="kicker">Treino ativo · 40 verbos · modais · have/has/had</div>
+  <div class="kicker">Treino ativo · 44 verbos · modais · to be · have/has/had</div>
   <h1>Na ponta da <em>língua</em></h1>
 
   <div class="stats statrow-prog">
@@ -342,6 +346,7 @@
     <button class="tab" id="tab-verbs">✍ Verbos</button>
     <button class="tab" id="tab-modals">◆ Modais</button>
     <button class="tab" id="tab-hhh">have·has·had</button>
+    <button class="tab" id="tab-be">to be</button>
   </div>
 
   <div class="card">
@@ -426,9 +431,7 @@ const V = {
  look:["olhar / procurar","looked","looked",null,0,["I looked everywhere for it.","Procurei em todo lugar."],["I've looked at all the options.","Já olhei todas as opções."],null],
  want:["querer","wanted","wanted","wanna",0,["I wanted to call you.","Eu queria te ligar."],["I've always wanted to travel.","Sempre quis viajar."],["I wanna go home.","Quero ir pra casa."]],
  think:["pensar / achar","thought","thought",null,1,["I thought about it a lot.","Pensei muito nisso."],["I've never thought of that.","Nunca pensei nisso."],null],
- say:["dizer / falar","said","said",null,1,["She said she'd help.","Ela disse que ia ajudar."],["I've said too much.","Falei demais."],null],
- chill:["relaxar (gíria)","chilled","chilled",null,0,["We chilled at home.","A gente relaxou em casa."],["I have chilled at home all weekend.","Relaxei em casa o fim de semana todo."],null],
- work:["trabalhar / funcionar","worked","worked",null,0,["I worked late yesterday.","Trabalhei até tarde ontem."],["It hasn't worked so far.","Não funcionou até agora."],null],
+ say:["dizer / falar","said","said",null,1,["She said she'd help.","Ela disse que ia ajudar."],["I've said too much.","Falei demais."],null], work:["trabalhar / funcionar","worked","worked",null,0,["I worked late yesterday.","Trabalhei até tarde ontem."],["It hasn't worked so far.","Não funcionou até agora."],null],
  eat:["comer","ate","eaten",null,1,["I ate too much at lunch.","Comi demais no almoço."],["I've already eaten.","Já comi."],null],
  see:["ver / entender","saw","seen",null,1,["I saw her at the store.","Eu a vi na loja."],["I've seen that movie twice.","Já vi esse filme duas vezes."],null],
  find:["achar / encontrar","found","found",null,1,["I found my keys.","Achei minhas chaves."],["She has found a new job.","Ela encontrou um emprego novo."],null],
@@ -439,9 +442,7 @@ const V = {
  put:["colocar / pôr","put","put",null,1,["I put the money in the bank.","Coloquei o dinheiro no banco."],["She has put it back already.","Ela já colocou de volta."],null],
  tell:["contar / dizer (a alguém)","told","told",null,1,["He told me the truth.","Ele me contou a verdade."],["I've told you before.","Já te falei antes."],null],
  catch:["pegar / alcançar","caught","caught",null,1,["I caught the last bus.","Peguei o último ônibus."],["He has caught a cold.","Ele pegou um resfriado."],null],
- hit:["bater / acertar","hit","hit",null,1,["The car hit a pole.","O carro bateu num poste."],["We've hit a problem.","A gente esbarrou num problema."],null],
- use:["usar","used","used",null,0,["I used your charger.","Usei seu carregador."],["I've used this app for years.","Uso esse app há anos."],null],
- hear:["ouvir / escutar","heard","heard",null,1,["I heard a noise outside.","Ouvi um barulho lá fora."],["I've heard that song before.","Já ouvi essa música antes."],null],
+ hit:["bater / acertar","hit","hit",null,1,["The car hit a pole.","O carro bateu num poste."],["We've hit a problem.","A gente esbarrou num problema."],null], hear:["ouvir / escutar","heard","heard",null,1,["I heard a noise outside.","Ouvi um barulho lá fora."],["I've heard that song before.","Já ouvi essa música antes."],null],
  meet:["conhecer / encontrar","met","met",null,1,["I met her last year.","Conheci ela ano passado."],["We've met before, right?","A gente já se conheceu, né?"],null],
  mess:["bagunçar / estragar","messed","messed",null,0,["I messed up the recipe.","Estraguei a receita."],["You've messed everything up.","Você estragou tudo."],null],
  check:["conferir / verificar","checked","checked",null,0,["I checked my email this morning.","Conferi meu e-mail hoje de manhã."],["I've checked it twice.","Já conferi duas vezes."],null],
@@ -449,12 +450,18 @@ const V = {
  figure:["descobrir / entender","figured","figured",null,0,["I figured it out on my own.","Descobri sozinho."],["I've figured out the problem.","Já entendi o problema."],null],
  talk:["conversar / falar","talked","talked",null,0,["We talked for hours.","A gente conversou por horas."],["I've talked to her about it.","Já falei com ela sobre isso."],null],
  hold:["segurar / esperar","held","held",null,1,["She held my hand.","Ela segurou minha mão."],["I've held this seat for you.","Guardei esse lugar pra você."],null],
+ do:["fazer","did","done",null,1,["I did my homework last night.","Fiz minha lição ontem à noite."],["I've done everything I can.","Já fiz tudo que posso."],null],
+ leave:["sair / deixar","left","left",null,1,["I left work early yesterday.","Saí do trabalho mais cedo ontem."],["She has left already.","Ela já saiu."],null],
+ bring:["trazer","brought","brought",null,1,["She brought a gift.","Ela trouxe um presente."],["I've brought enough food.","Trouxe comida suficiente."],null],
+ spend:["gastar / passar (tempo)","spent","spent",null,1,["I spent too much money.","Gastei dinheiro demais."],["We've spent the whole day here.","Passamos o dia todo aqui."],null],
+ lose:["perder","lost","lost",null,1,["I lost my keys yesterday.","Perdi minhas chaves ontem."],["He has lost his phone again.","Ele perdeu o celular de novo."],null],
+ mean:["significar / querer dizer","meant","meant",null,1,["I meant what I said.","Falei sério."],["That has always meant a lot to me.","Isso sempre significou muito pra mim."],null],
 };
 const REDSRC={go:"going to",let:"let me",get:"got to",need:"need to",give:"give me",come:"come on",want:"want to"};
-const PAST_CUE={go:"fui ontem",let:"deixei ontem",get:"consegui / peguei ontem",need:"precisei ontem",keep:"continuei / mantive ontem",move:"me mudei / movi ontem",give:"dei ontem",feel:"senti ontem",run:"corri / acabou ontem",come:"vim ontem",call:"liguei / chamei ontem",know:"soube / conheci ontem",take:"peguei / levei ontem",make:"fiz ontem",look:"olhei / procurei ontem",want:"quis ontem",think:"pensei / achei ontem",say:"disse / falei ontem",chill:"relaxei ontem",work:"trabalhei / funcionou ontem",eat:"comi ontem",see:"vi ontem",find:"achei ontem",grab:"peguei (rápido) ontem",ask:"perguntei / pedi ontem",hang:"pendurei / saí com alguém ontem",pick:"escolhi / peguei ontem",put:"coloquei ontem",tell:"contei ontem",catch:"peguei / alcancei ontem",hit:"bati / acertei ontem",use:"usei ontem",hear:"ouvi ontem",meet:"conheci / encontrei ontem",mess:"baguncei / estraguei ontem",check:"conferi ontem",drop:"derrubei / larguei ontem",figure:"descobri / entendi ontem",talk:"conversei ontem",hold:"segurei ontem"};
-const PART_CUE={go:"já fui",let:"já deixei",get:"já consegui / peguei",need:"já precisei",keep:"já continuei / mantive",move:"já me mudei / movi",give:"já dei",feel:"já senti",run:"já corri / acabou",come:"já vim",call:"já liguei / chamei",know:"já soube / conheci",take:"já peguei / levei",make:"já fiz",look:"já olhei / procurei",want:"já quis",think:"já pensei / achei",say:"já disse / falei",chill:"já relaxei",work:"já trabalhei / funcionou",eat:"já comi",see:"já vi",find:"já achei",grab:"já peguei (rápido)",ask:"já perguntei / pedi",hang:"já pendurei / saí com alguém",pick:"já escolhi / peguei",put:"já coloquei",tell:"já contei",catch:"já peguei / alcancei",hit:"já bati / acertei",use:"já usei",hear:"já ouvi",meet:"já conheci / encontrei",mess:"já baguncei / estraguei",check:"já conferi",drop:"já derrubei / larguei",figure:"já descobri / entendi",talk:"já conversei",hold:"já segurei"};
+const PAST_CUE={go:"fui ontem",let:"deixei ontem",get:"consegui / peguei ontem",need:"precisei ontem",keep:"continuei / mantive ontem",move:"me mudei / movi ontem",give:"dei ontem",feel:"senti ontem",run:"corri / acabou ontem",come:"vim ontem",call:"liguei / chamei ontem",know:"soube / conheci ontem",take:"peguei / levei ontem",make:"fiz ontem",look:"olhei / procurei ontem",want:"quis ontem",think:"pensei / achei ontem",say:"disse / falei ontem",work:"trabalhei / funcionou ontem",eat:"comi ontem",see:"vi ontem",find:"achei ontem",grab:"peguei (rápido) ontem",ask:"perguntei / pedi ontem",hang:"pendurei / saí com alguém ontem",pick:"escolhi / peguei ontem",put:"coloquei ontem",tell:"contei ontem",catch:"peguei / alcancei ontem",hit:"bati / acertei ontem",hear:"ouvi ontem",meet:"conheci / encontrei ontem",mess:"baguncei / estraguei ontem",check:"conferi ontem",drop:"derrubei / larguei ontem",figure:"descobri / entendi ontem",talk:"conversei ontem",hold:"segurei ontem",do:"fiz ontem",leave:"saí / deixei ontem",bring:"trouxe ontem",spend:"gastei / passei ontem",lose:"perdi ontem",mean:"quis dizer ontem"};
+const PART_CUE={go:"já fui",let:"já deixei",get:"já consegui / peguei",need:"já precisei",keep:"já continuei / mantive",move:"já me mudei / movi",give:"já dei",feel:"já senti",run:"já corri / acabou",come:"já vim",call:"já liguei / chamei",know:"já soube / conheci",take:"já peguei / levei",make:"já fiz",look:"já olhei / procurei",want:"já quis",think:"já pensei / achei",say:"já disse / falei",work:"já trabalhei / funcionou",eat:"já comi",see:"já vi",find:"já achei",grab:"já peguei (rápido)",ask:"já perguntei / pedi",hang:"já pendurei / saí com alguém",pick:"já escolhi / peguei",put:"já coloquei",tell:"já contei",catch:"já peguei / alcancei",hit:"já bati / acertei",hear:"já ouvi",meet:"já conheci / encontrei",mess:"já baguncei / estraguei",check:"já conferi",drop:"já derrubei / larguei",figure:"já descobri / entendi",talk:"já conversei",hold:"já segurei",do:"já fiz",leave:"já saí / deixei",bring:"já trouxe",spend:"já gastei / passei",lose:"já perdi",mean:"já quis dizer"};
 const RED_CUE={go:"vou fazer amanhã / depois",want:"quero…",get:"tenho que…",need:"preciso…",give:"me dá!",let:"me deixa…",come:"anda, vem logo!"};
-const PRES_CUE={go:"ele vai (sempre)",let:"ela deixa (sempre)",get:"ele consegue / pega (sempre)",need:"ela precisa (agora)",keep:"ele continua / mantém (sempre)",move:"ela se muda / move (sempre)",give:"ele dá (sempre)",feel:"ela se sente (hoje)",run:"ele corre / acaba (sempre)",come:"ela vem (sempre)",call:"ele liga / chama (sempre)",know:"ela sabe / conhece (sempre)",take:"ele pega / leva (sempre)",make:"ela faz (sempre)",look:"ele olha / procura (sempre)",want:"ela quer (agora)",think:"ele acha / pensa (agora)",say:"ela diz / fala (sempre)",chill:"ele relaxa (sempre)",work:"ela trabalha / funciona (sempre)",eat:"ele come (sempre)",see:"ela vê (sempre)",find:"ele acha / encontra (sempre)",grab:"ela pega (agora)",ask:"ele pergunta / pede (sempre)",hang:"ela pendura / sai com a gente (sempre)",pick:"ele escolhe / pega (sempre)",put:"ela coloca (sempre)",tell:"ele conta / diz (sempre)",catch:"ela pega / alcança (sempre)",hit:"ele bate / acerta (sempre)",use:"ela usa (sempre)",hear:"ele ouve (agora)",meet:"ela conhece / encontra (sempre)",mess:"ele bagunça / estraga (sempre)",check:"ela confere (sempre)",drop:"ele derruba / larga (sempre)",figure:"ela descobre / entende (sempre)",talk:"ele conversa / fala (sempre)",hold:"ela segura (agora)"};
+const PRES_CUE={go:"ele vai (sempre)",let:"ela deixa (sempre)",get:"ele consegue / pega (sempre)",need:"ela precisa (agora)",keep:"ele continua / mantém (sempre)",move:"ela se muda / move (sempre)",give:"ele dá (sempre)",feel:"ela se sente (hoje)",run:"ele corre / acaba (sempre)",come:"ela vem (sempre)",call:"ele liga / chama (sempre)",know:"ela sabe / conhece (sempre)",take:"ele pega / leva (sempre)",make:"ela faz (sempre)",look:"ele olha / procura (sempre)",want:"ela quer (agora)",think:"ele acha / pensa (agora)",say:"ela diz / fala (sempre)",work:"ela trabalha / funciona (sempre)",eat:"ele come (sempre)",see:"ela vê (sempre)",find:"ele acha / encontra (sempre)",grab:"ela pega (agora)",ask:"ele pergunta / pede (sempre)",hang:"ela pendura / sai com a gente (sempre)",pick:"ele escolhe / pega (sempre)",put:"ela coloca (sempre)",tell:"ele conta / diz (sempre)",catch:"ela pega / alcança (sempre)",hit:"ele bate / acerta (sempre)",hear:"ele ouve (agora)",meet:"ela conhece / encontra (sempre)",mess:"ele bagunça / estraga (sempre)",check:"ela confere (sempre)",drop:"ele derruba / larga (sempre)",figure:"ela descobre / entende (sempre)",talk:"ele conversa / fala (sempre)",hold:"ela segura (agora)",do:"ele faz (sempre)",leave:"ela sai / deixa (sempre)",bring:"ele traz (sempre)",spend:"ela gasta / passa (sempre)",lose:"ele perde (sempre)",mean:"ela significa / quer dizer (sempre)"};
 const PRES_EX={
  go:["He goes to the gym every day.","Ele vai à academia todo dia."],
  let:["She lets me use her car.","Ela me deixa usar o carro dela."],
@@ -473,9 +480,7 @@ const PRES_EX={
  look:["He looks at his phone all the time.","Ele olha o celular toda hora."],
  want:["She wants some coffee.","Ela quer um café."],
  think:["He thinks you're right.","Ele acha que você tem razão."],
- say:["She says what she thinks.","Ela fala o que pensa."],
- chill:["He just chills on weekends.","Ele só relaxa nos fins de semana."],
- work:["She works from home.","Ela trabalha de casa."],
+ say:["She says what she thinks.","Ela fala o que pensa."], work:["She works from home.","Ela trabalha de casa."],
  eat:["He eats lunch at noon.","Ele almoça ao meio-dia."],
  see:["She sees the problem now.","Ela está vendo o problema agora."],
  find:["He always finds a way.","Ele sempre dá um jeito."],
@@ -486,27 +491,31 @@ const PRES_EX={
  put:["She puts her keys on the table.","Ela põe as chaves na mesa."],
  tell:["He tells the same story every time.","Ele conta a mesma história sempre."],
  catch:["She catches the bus at seven.","Ela pega o ônibus às sete."],
- hit:["He hits the gym after work.","Ele vai pra academia depois do trabalho."],
- use:["She uses her phone for everything.","Ela usa o celular pra tudo."],
- hear:["He hears you just fine.","Ele te ouve muito bem."],
+ hit:["He hits the gym after work.","Ele vai pra academia depois do trabalho."], hear:["He hears you just fine.","Ele te ouve muito bem."],
  meet:["She meets new people every week.","Ela conhece gente nova toda semana."],
  mess:["He messes everything up.","Ele estraga tudo."],
  check:["She checks her email every hour.","Ela confere o e-mail de hora em hora."],
  drop:["He drops the kids off at school.","Ele deixa as crianças na escola."],
  figure:["She figures things out fast.","Ela entende as coisas rápido."],
  talk:["He talks to his brother every day.","Ele conversa com o irmão todo dia."],
- hold:["She holds the door for everyone.","Ela segura a porta pra todo mundo."]};
+ hold:["She holds the door for everyone.","Ela segura a porta pra todo mundo."],
+ do:["He does the dishes every night.","Ele lava a louça toda noite."],
+ leave:["He leaves for work at eight.","Ele sai pro trabalho às oito."],
+ bring:["She brings her lunch every day.","Ela traz o almoço todo dia."],
+ spend:["He spends a lot on clothes.","Ele gasta muito com roupa."],
+ lose:["She always loses her umbrella.","Ela sempre perde o guarda-chuva."],
+ mean:["That word means 'freedom'.","Essa palavra significa 'liberdade'."]};
 const WRONGREG={go:"goed",get:"getted",let:"letted",keep:"keeped",give:"gived",feel:"feeled",run:"runned",come:"comed",know:"knowed",take:"taked",make:"maked",think:"thinked",say:"sayed",
- eat:"eated",see:"seed",find:"finded",hang:"hanged",put:"putted",tell:"telled",catch:"catched",hit:"hitted",hear:"heared",meet:"meeted",hold:"holded"};
-const ING={go:"going",let:"letting",get:"getting",need:"needing",keep:"keeping",move:"moving",give:"giving",feel:"feeling",run:"running",come:"coming",call:"calling",know:"knowing",take:"taking",make:"making",look:"looking",want:"wanting",think:"thinking",say:"saying",chill:"chilling",work:"working",
- eat:"eating",see:"seeing",find:"finding",grab:"grabbing",ask:"asking",hang:"hanging",pick:"picking",put:"putting",tell:"telling",catch:"catching",hit:"hitting",use:"using",hear:"hearing",meet:"meeting",mess:"messing",check:"checking",drop:"dropping",figure:"figuring",talk:"talking",hold:"holding"};
+ eat:"eated",see:"seed",find:"finded",hang:"hanged",put:"putted",tell:"telled",catch:"catched",hit:"hitted",hear:"heared",meet:"meeted",hold:"holded",do:"doed",leave:"leaved",bring:"bringed",spend:"spended",lose:"losed",mean:"meaned"};
+const ING={go:"going",let:"letting",get:"getting",need:"needing",keep:"keeping",move:"moving",give:"giving",feel:"feeling",run:"running",come:"coming",call:"calling",know:"knowing",take:"taking",make:"making",look:"looking",want:"wanting",think:"thinking",say:"saying",work:"working",
+ eat:"eating",see:"seeing",find:"finding",grab:"grabbing",ask:"asking",hang:"hanging",pick:"picking",put:"putting",tell:"telling",catch:"catching",hit:"hitting",hear:"hearing",meet:"meeting",mess:"messing",check:"checking",drop:"dropping",figure:"figuring",talk:"talking",hold:"holding",do:"doing",leave:"leaving",bring:"bringing",spend:"spending",lose:"losing",mean:"meaning"};
 const REDLIST=["gonna","lemme","gotta","needa","gimme","c'mon","wanna"];
 
 // famílias de irregulares (chunking por padrão)
 const FAM={
- reg:{label:"Regulares -ed",color:"#2dc770",tip:"passado e particípio: é só somar -ed",members:["need","move","call","look","want","chill","work","grab","ask","pick","use","mess","check","drop","figure","talk"]},
- abb:{label:"2× igual",color:"#f0b232",tip:"passado = particípio — uma forma só pra decorar",members:["keep","feel","make","think","say","find","hang","tell","catch","hear","meet","hold"]},
- abc:{label:"Muda tudo",color:"#f23f43",tip:"três formas diferentes — os que mais derrubam",members:["go","get","give","know","take","eat","see"]},
+ reg:{label:"Regulares -ed",color:"#2dc770",tip:"passado e particípio: é só somar -ed",members:["need","move","call","look","want","work","grab","ask","pick","mess","check","drop","figure","talk"]},
+ abb:{label:"2× igual",color:"#f0b232",tip:"passado = particípio — uma forma só pra decorar",members:["keep","feel","make","think","say","find","hang","tell","catch","hear","meet","hold","leave","bring","spend","lose","mean"]},
+ abc:{label:"Muda tudo",color:"#f23f43",tip:"três formas diferentes — os que mais derrubam",members:["go","get","give","know","take","eat","see","do"]},
  aba:{label:"Vai e volta",color:"#949cf7",tip:"o particípio volta a ser igual ao presente",members:["run","come"]},
  aaa:{label:"Invariável",color:"#00a8fc",tip:"nunca muda: let · let · let",members:["let","put","hit"]}
 };
@@ -515,7 +524,7 @@ const FAM_OF={}; for(const f in FAM) FAM[f].members.forEach(m=>FAM_OF[m]=f);
 // ============================================================
 // construção dos itens
 // ============================================================
-function pres3(k){ if(k==="go")return"goes"; return /(s|x|z|ch|sh)$/.test(k)?k+"es":k+"s"; }
+function pres3(k){ if(k==="go")return"goes"; if(k==="do")return"does"; return /(s|x|z|ch|sh)$/.test(k)?k+"es":k+"s"; }
 function gapFrom(ex,answer){
   const re=new RegExp("\\b"+answer.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"\\b","i");
   if(!re.test(ex[0])) return null;
@@ -553,9 +562,7 @@ const MODAL_DEFS=[
  {id:"m-would",cue:"no condicional",answer:"would",use:"“faria”; convite educado (Would you like…?).",ex:["I would help you.","Eu te ajudaria."],opts:["would","will","could"]},
  {id:"m-may",cue:"permissão formal",answer:"may",use:"permissão formal ou possibilidade.",ex:["May I come in?","Posso entrar?"],opts:["May","Must","Would"]},
  {id:"m-might",cue:"talvez, incerto",answer:"might",use:"possibilidade mais incerta que may.",ex:["It might rain later.","Pode chover mais tarde."],opts:["might","may","will"]},
- {id:"m-will",cue:"decisão na hora",answer:"will",use:"futuro, promessa, decisão espontânea ('ll). gonna = plano prévio.",ex:["I'll help you!","Eu te ajudo!"],gapEx:["I will call you tonight, I promise.","Vou te ligar hoje à noite, prometo."],opts:["will","would","might"]},
- {id:"m-shall",cue:"sugestão formal",answer:"shall",use:"sugestão/futuro formal (raro nos EUA).",ex:["Shall we begin?","Vamos começar?"],opts:["Shall","Should","Will"]},
-];
+ {id:"m-will",cue:"decisão na hora",answer:"will",use:"futuro, promessa, decisão espontânea ('ll). gonna = plano prévio.",ex:["I'll help you!","Eu te ajudo!"],gapEx:["I will call you tonight, I promise.","Vou te ligar hoje à noite, prometo."],opts:["will","would","might"]},];
 MODAL_DEFS.forEach(m=>{
   const src=m.gapEx||m.ex;
   ITEMS.push({id:m.id,pool:"modals",kind:"modal",cue:m.cue,answer:m.answer,hint:"("+m.cue+")",
@@ -569,7 +576,7 @@ const SCEN_DEFS=[
  ["A entrada é de graça — pagar é opcional.","You ___ pay to get in.",["don't have to","mustn't","can't"],"don't have to","“Não precisa” → don't have to. mustn't = proibido.","Você não precisa pagar pra entrar."],
  ["O céu está nublado, mas nada é certo.","It ___ rain later.",["might","must","should"],"might","Possibilidade incerta → might.","Pode ser que chova mais tarde."],
  ["As luzes estão acesas — conclusão lógica.","They ___ be home.",["must","might","should"],"must","Dedução forte pela evidência → must.","Eles devem estar em casa."],
- ["Pedido educado a um estranho na rua.","___ you help me with this box?",["Could","Must","Shall"],"Could","Pedido educado → could (ou would).","Você poderia me ajudar com esta caixa?"],
+ ["Pedido educado a um estranho na rua.","___ you help me with this box?",["Could","Must","Will"],"Could","Pedido educado → could (ou would).","Você poderia me ajudar com esta caixa?"],
  ["Oferecendo café com educação.","___ you like some coffee?",["Would","Will","May"],"Would","Oferta/convite educado → would like.","Você gostaria de um café?"],
  ["Ela tem 5 anos e já sabe nadar.","She ___ swim already!",["can","could","may"],"can","Habilidade no presente → can.","Ela já sabe nadar!"],
  ["Falando de quando você era criança.","I ___ swim when I was five.",["could","can","might"],"could","Habilidade no passado → could.","Eu sabia nadar quando tinha cinco anos."],
@@ -577,9 +584,7 @@ const SCEN_DEFS=[
  ["Vocês planejaram a mudança há meses.","We're ___ move next month.",["gonna","will","would"],"gonna","Plano já decidido → be going to (gonna). will nunca vem depois de 're.","Vamos nos mudar mês que vem."],
  ["Batendo na porta do chefe, formal.","___ I come in?",["May","Must","Would"],"May","Permissão formal → may.","Posso entrar?"],
  ["Fazendo uma promessa.","I ___ call you tonight, I promise.",["will","would","might"],"will","Promessa → will.","Vou te ligar hoje à noite, prometo."],
- ["Sonhando acordado: se você tivesse dinheiro…","If I had money, I ___ travel the world.",["would","will","must"],"would","Condicional (“faria”) → would.","Se eu tivesse dinheiro, viajaria o mundo."],
- ["Abrindo uma reunião formal.","___ we begin?",["Shall","Will","Do"],"Shall","Sugestão formal → shall (raro nos EUA).","Vamos começar?"],
- ["É lei: cinto de segurança.","You ___ wear a seatbelt — it's the law.",["must","should","could"],"must","Obrigação por lei → must.","Você deve usar cinto — é lei."],
+ ["Sonhando acordado: se você tivesse dinheiro…","If I had money, I ___ travel the world.",["would","will","must"],"would","Condicional (“faria”) → would.","Se eu tivesse dinheiro, viajaria o mundo."], ["É lei: cinto de segurança.","You ___ wear a seatbelt — it's the law.",["must","should","could"],"must","Obrigação por lei → must.","Você deve usar cinto — é lei."],
  ["Talvez você não vá à festa — ainda não sabe.","I ___ not go to the party.",["might","must","can"],"might","might not = talvez não.","Talvez eu não vá à festa."],
  ["Segunda você começa a academia — já está decidido.","I'm ___ start the gym on Monday.",["gonna","will","should"],"gonna","Plano prévio com be → gonna (going to).","Vou começar a academia segunda."],
 ].map((e,i)=>({id:"sc-"+i,pool:"scen",sc:e[0],s:e[1],opts:e[2],answer:e[3],why:e[4],pt:e[5]}));
@@ -614,10 +619,37 @@ const HHH_DEFS=[
 ].map((e,i)=>({id:"h-"+i,pool:"hhh",s:e[0],opts:e[1],answer:e[2],why:e[3],pt:e[4]}));
 ITEMS=ITEMS.concat(HHH_DEFS);
 
+// verbo to be — escolha a forma certa pra cada sujeito e tempo
+const BE_DEFS=[
+ ["I ___ a teacher.",["am","is","are"],"am","I → am (I'm).","Sou professor."],
+ ["She ___ my best friend.",["am","is","are"],"is","he/she/it → is.","Ela é minha melhor amiga."],
+ ["They ___ at home right now.",["am","is","are"],"are","you/we/they + plural → are.","Eles estão em casa agora."],
+ ["We ___ late for the meeting.",["am","is","are"],"are","we → are.","Estamos atrasados pra reunião."],
+ ["You ___ my favorite person.",["am","is","are"],"are","you → are (mesmo pra 1 pessoa).","Você é minha pessoa favorita."],
+ ["It ___ a beautiful day.",["am","is","are"],"is","it → is.","Está um dia lindo."],
+ ["He ___ very tired yesterday.",["was","were","is"],"was","passado, he/she/it → was.","Ele estava muito cansado ontem."],
+ ["You ___ right all along.",["was","were","are"],"were","passado, you/we/they → were.","Você estava certo o tempo todo."],
+ ["The kids ___ asleep when I got home.",["was","were","are"],"were","plural no passado → were.","As crianças estavam dormindo quando cheguei."],
+ ["I ___ born in 1990.",["was","were","am"],"was","I no passado → was. (be born = nascer)","Nasci em 1990."],
+ ["Where ___ you last night?",["was","were","are"],"were","you no passado → were; vem pra frente na pergunta.","Onde você estava ontem à noite?"],
+ ["I ___ working when you called.",["was","were","am"],"was","contínuo no passado: was + -ing.","Eu estava trabalhando quando você ligou."],
+ ["They ___ waiting for the bus.",["was","were","are"],"were","plural + -ing no passado → were.","Eles estavam esperando o ônibus."],
+ ["She ___ studying right now.",["am","is","are"],"is","contínuo no presente: she → is + -ing.","Ela está estudando agora."],
+ ["I've ___ to Japan twice.",["been","was","being"],"been","depois de have/has/had → been (particípio).","Já fui ao Japão duas vezes."],
+ ["This house has ___ empty for years.",["been","was","being"],"been","have/has + been (particípio de be).","Essa casa está vazia há anos."],
+ ["___ you happy with the result?",["Are","Is","Am"],"Are","pergunta, you → Are, vem pro começo.","Você está feliz com o resultado?"],
+ ["He ___ not here yet.",["is","are","am"],"is","he → is; negativa: isn't.","Ele não está aqui ainda."],
+ ["We ___ not ready yesterday.",["was","were","are"],"were","we no passado → were; weren't.","A gente não estava pronto ontem."],
+ ["Stop ___ so hard on yourself.",["being","been","be"],"being","depois de stop / preposição → -ing: being.","Pare de se cobrar tanto."],
+ ["It ___ raining when we left.",["was","were","is"],"was","it no passado contínuo → was + -ing.","Estava chovendo quando saímos."],
+].map((e,i)=>({id:"be-"+i,pool:"be",s:e[0],opts:e[1],answer:e[2],why:e[3],pt:e[4]}));
+ITEMS=ITEMS.concat(BE_DEFS);
+
 const VERB_POOL=ITEMS.filter(it=>it.pool==="verbs");
 const MODAL_POOL=ITEMS.filter(it=>it.pool==="modals");
 const SCEN_POOL=ITEMS.filter(it=>it.pool==="scen");
 const HHH_POOL=ITEMS.filter(it=>it.pool==="hhh");
+const BE_POOL=ITEMS.filter(it=>it.pool==="be");
 const TOTAL=ITEMS.length;
 
 // ============================================================
@@ -871,6 +903,11 @@ function usageNote(it){
     const h=HELP_HHH.find(a=>a.w===k);
     return h?h.tip:null;
   }
+  if(it.pool==="be"){
+    const k=norm(it.answer).replace(/nt$/,"");   // isn't→is · wasn't→was · aren't→are …
+    const h=HELP_BE.find(a=>a.w===k);
+    return h?h.tip:null;
+  }
   return null; // modais: it.use já é a explicação de uso e aparece como why
 }
 // O card de resposta é sempre o mesmo esqueleto: significado → formas → quando → como → exemplo.
@@ -885,6 +922,11 @@ function typedSpec(it){
     const full=it.s.replace("___",it.answer);
     return {instr:"have, has ou had? Escreva a forma certa",
       promptHTML:gapHTML(it.s),meaning:it.pt,answer:it.answer,full,fullPt:it.pt,when:it.why,how:usage,placeholder:"have / has / had"};
+  }
+  if(it.pool==="be"){
+    const full=it.s.replace("___",it.answer);
+    return {instr:"Qual forma do verbo to be? Escreva a certa",
+      promptHTML:gapHTML(it.s),meaning:it.pt,answer:it.answer,full,fullPt:it.pt,when:it.why,how:usage,placeholder:"am / is / are · was / were …"};
   }
   if(it.pool==="modals"){
     const full=it.gap[0].replace("___",it.answer);
@@ -960,6 +1002,7 @@ document.addEventListener("keydown",e=>{
 function startVerbs(){renderTyped(pickSingle(VERB_POOL),startVerbs);}
 function startModals(){renderTyped(pickSingle([...MODAL_POOL,...SCEN_POOL]),startModals);}
 function startHHH(){renderTyped(pickSingle(HHH_POOL),startHHH);}
+function startBE(){renderTyped(pickSingle(BE_POOL),startBE);}
 
 // ============================================================
 // treino do dia (interleaving + SRS)
@@ -1063,9 +1106,7 @@ const HELP_VERB={
  look:"Regular, mas muda de sentido com preposição: look for = procurar; look after = cuidar de; look into = investigar.",
  want:"Regular (+ed). wanna = want to, mas com he/she é wants to (nunca “he wanna”).",
  think:"thought / thought (soa “thót”; nunca “thinked”).",
- say:"said / said (soa “sed”; says soa “sez”). say = dizer algo; tell = contar a alguém.",
- chill:"Gíria informal — evite em textos formais. chill out = se acalmar.",
- work:"Regular (+ed), com dois sentidos: trabalhar e funcionar (“It works!”).",
+ say:"said / said (soa “sed”; says soa “sez”). say = dizer algo; tell = contar a alguém.", work:"Regular (+ed), com dois sentidos: trabalhar e funcionar (“It works!”).",
  eat:"ate / eaten (nunca “eated”). ate soa “êit”. eat out = comer fora.",
  see:"saw / seen (nunca “I have saw”). Também significa entender: “I see” = entendi.",
  find:"found / found. Não confunda com found (fundar). find out = descobrir uma informação.",
@@ -1076,16 +1117,20 @@ const HELP_VERB={
  put:"Invariável: put / put / put — nunca “putted”. put off = adiar; put up with = aturar.",
  tell:"told / told. tell precisa de quem ouve (tell me), say não (say something).",
  catch:"caught / caught (soa “kót”, igual a thought). He catches leva -es.",
- hit:"Invariável: hit / hit / hit. hit the gym = ir pra academia.",
- use:"Regular, só soma -d: used. used to = costumava (hábito no passado).",
- hear:"heard / heard (soa “rêrd”). hear = ouvir sem querer; listen = escutar de propósito.",
+ hit:"Invariável: hit / hit / hit. hit the gym = ir pra academia.", hear:"heard / heard (soa “rêrd”). hear = ouvir sem querer; listen = escutar de propósito.",
  meet:"met / met (um t só no passado). meet = conhecer alguém pela 1ª vez ou encontrar.",
  mess:"Regular (+ed). he messes leva -es. mess up = estragar; mess with = mexer com.",
  check:"Regular (+ed). check out = dar uma olhada / fazer check-out.",
  drop:"Regular, mas dobra o p: dropped. drop off = deixar alguém; drop out = largar.",
  figure:"Regular, só soma -d: figured. Quase sempre com out: figure out = sacar/descobrir.",
  talk:"Regular (+ed). talk to/with alguém, talk about algo. talk = conversa de mão dupla.",
- hold:"held / held (nunca “holded”). hold on = espera aí; hold up = atrasar/segurar."
+ hold:"held / held (nunca “holded”). hold on = espera aí; hold up = atrasar/segurar.",
+ do:"did / done (nunca “doed”). do = fazer em geral e auxiliar de perguntas/negativas (Do you…? / don't). do ≠ make: do = executar/atividade, make = criar/produzir.",
+ leave:"left / left. leave = ir embora e também deixar algo/alguém. leave ≠ let (let = permitir). leave me alone = me deixa em paz.",
+ bring:"brought / brought (soa “brót”, como thought/caught). bring = trazer (pra cá) ≠ take (levar pra lá). bring up = mencionar um assunto.",
+ spend:"spent / spent. spend = gastar (dinheiro) e passar (tempo): spend time with. spend on + coisa.",
+ lose:"lost / lost. lose (perder) ≠ loose (frouxo). lose weight = emagrecer; get lost = se perder.",
+ mean:"meant / meant (soa “mént”). mean = significar e “querer dizer” (I mean…). mean to = pretender; I didn't mean it = não foi por querer."
 };
 // fórmula curta de uso — o "como usar" do card de resposta.
 // Prosa fica no card de Ajuda (HELP_VERB); aqui é só o padrão + o phrasal mais frequente.
@@ -1107,9 +1152,7 @@ const PATTERN={
  look:"look at = olhar · look for = procurar · look like = parecer",
  want:"want to + verbo · want + coisa",
  think:"think about = pensar em · think that = achar que",
- say:"say + algo: say it · nunca “say me”",
- chill:"chill = relaxar · chill out = se acalmar",
- work:"work at/for + empresa · work on = trabalhar em algo",
+ say:"say + algo: say it · nunca “say me”", work:"work at/for + empresa · work on = trabalhar em algo",
  eat:"eat + comida · eat out = comer fora",
  see:"see + coisa/pessoa · “I see” = entendi",
  find:"find + coisa perdida · find out = descobrir informação",
@@ -1120,16 +1163,20 @@ const PATTERN={
  put:"put + coisa + lugar: put it on the table · put off = adiar",
  tell:"tell + alguém + algo: tell me · nunca “tell to me”",
  catch:"catch the bus/ball · catch a cold · catch up = pôr em dia",
- hit:"hit + coisa · hit the gym / the road = ir pra…",
- use:"use + coisa · used to + verbo = costumava",
- hear:"hear + som, sem querer · hear from = ter notícias de",
+ hit:"hit + coisa · hit the gym / the road = ir pra…", hear:"hear + som, sem querer · hear from = ter notícias de",
  meet:"meet + pessoa (1ª vez) · meet up with = encontrar",
  mess:"mess up = estragar · mess with = mexer com",
  check:"check + algo · check out = dar uma olhada",
  drop:"drop + coisa = derrubar · drop off = deixar alguém",
  figure:"figure out = sacar/descobrir — quase sempre com out",
  talk:"talk to/with + pessoa · talk about + assunto",
- hold:"hold + coisa · hold on = espera aí · hold up = atrasar"
+ hold:"hold + coisa · hold on = espera aí · hold up = atrasar",
+ do:"do the dishes / homework / a favor · auxiliar: Do you…? / don't",
+ leave:"leave + lugar = sair de · leave + coisa = deixar · leave alone = deixar em paz",
+ bring:"bring + coisa pra cá · bring up = mencionar",
+ spend:"spend + dinheiro on algo · spend + tempo + -ing",
+ lose:"lose + coisa/jogo · lose weight = emagrecer · get lost = se perder",
+ mean:"mean + coisa = significar · mean to + verbo = pretender"
 };
 const HELP_AUX=[
  {w:"be",tr:"ser / estar",forms:"pres am · is · are | pass was · were | part been",
@@ -1156,11 +1203,35 @@ const HELP_HHH=[
   tip:"= precisar / ser obrigado. Com he/she/it vira has to. Na negativa, don't/doesn't have to = não precisa.",
   ex:["I have to go now. · He has to work on Saturdays.","Tenho que ir agora. · Ele tem que trabalhar aos sábados."]}
 ];
+const HELP_BE=[
+ {w:"am",tr:"só com I",forms:"presente — exclusivo do I",
+  tip:"am é só do I: I am / I'm. Nunca “I is” nem “I are”.",
+  ex:["I am ready. · I'm a teacher.","Estou pronto. · Sou professor."]},
+ {w:"is",tr:"he · she · it",forms:"presente, 3ª pessoa do singular",
+  tip:"he, she, it e nomes no singular → is. Negativa: isn't. Também monta o contínuo: she is working.",
+  ex:["She is my friend. · It is cold today.","Ela é minha amiga. · Está frio hoje."]},
+ {w:"are",tr:"you · we · they",forms:"presente, plural e you",
+  tip:"you, we, they e sujeitos no plural → are. Negativa: aren't. Vale até pra uma pessoa (you are).",
+  ex:["They are at home. · You are right.","Eles estão em casa. · Você está certo."]},
+ {w:"was",tr:"passado — I / he / she / it",forms:"passado do singular (e I)",
+  tip:"Passado de am/is: I, he, she, it → was. Negativa: wasn't. Contínuo no passado: I was working.",
+  ex:["He was tired. · I was born in 1990.","Ele estava cansado. · Nasci em 1990."]},
+ {w:"were",tr:"passado — you / we / they",forms:"passado do plural (e you)",
+  tip:"Passado de are: you, we, they e plural → were. Negativa: weren't.",
+  ex:["They were asleep. · Where were you?","Eles estavam dormindo. · Onde você estava?"]},
+ {w:"been",tr:"particípio",forms:"sempre com have / has / had",
+  tip:"Particípio de be — nunca vem sozinho: sempre depois de have/has/had. I've been, she has been, they had been.",
+  ex:["I've been to Japan. · It has been a long day.","Já fui ao Japão. · Foi um dia longo."]},
+ {w:"being",tr:"gerúndio (-ing)",forms:"depois de preposição / stop · passiva contínua",
+  tip:"O -ing de be. Aparece depois de preposição (tired of being…), de stop, e na passiva contínua (was being built).",
+  ex:["Stop being so hard on yourself. · The house was being built.","Pare de se cobrar tanto. · A casa estava sendo construída."]}
+];
 const HELP_CLASSES=[
- {key:"verbos",label:"Verbos",sub:"Os 40 verbos mais frequentes — sentido e todas as formas"},
+ {key:"verbos",label:"Verbos",sub:"Os 44 verbos mais frequentes — sentido e todas as formas"},
  {key:"modais",label:"Modais",sub:"Cada modal tem seu próprio sentido — depois dele, verbo na base"},
  {key:"aux",label:"Auxiliares",sub:"be · have · do — os três “verbos de apoio” do inglês"},
- {key:"hhh",label:"have · has · had",sub:"Qual forma usar com cada sujeito"}
+ {key:"hhh",label:"have · has · had",sub:"Qual forma usar com cada sujeito"},
+ {key:"be",label:"to be",sub:"am · is · are · was · were · been — a forma certa pra cada sujeito"}
 ];
 function helpItemHTML(w,tr,forms,tip,ex){
   const exHTML = ex ? `<div class="hex"><button class="spk" data-say="${ex[0].replace(/"/g,'&quot;')}">${SPK}</button><span>${ex[0]}<br>${ex[1]}</span></div>` : "";
@@ -1181,6 +1252,7 @@ function helpContent(key){
   if(key==="modais") return MODAL_DEFS.map(m=>helpItemHTML(m.answer,m.cue,"",m.use,m.ex)).join("");
   if(key==="aux")    return HELP_AUX.map(a=>helpItemHTML(a.w,a.tr,a.forms,a.tip,a.ex)).join("");
   if(key==="hhh")    return HELP_HHH.map(a=>helpItemHTML(a.w,a.tr,a.forms,a.tip,a.ex)).join("");
+  if(key==="be")     return HELP_BE.map(a=>helpItemHTML(a.w,a.tr,a.forms,a.tip,a.ex)).join("");
   return "";
 }
 let helpCls="verbos";
@@ -1196,7 +1268,7 @@ function openHelp(cls){
   body.querySelectorAll(".spk").forEach(btn=>btn.onclick=()=>speak(btn.dataset.say));
   $("help").classList.add("show");
 }
-const MODE2CLS={verbs:"verbos",modals:"modais",hhh:"hhh"};
+const MODE2CLS={verbs:"verbos",modals:"modais",hhh:"hhh",be:"be"};
 $("helpClose").onclick=()=>$("help").classList.remove("show");
 $("help").addEventListener("click",e=>{if(e.target===$("help"))$("help").classList.remove("show");});
 
@@ -1206,16 +1278,19 @@ $("help").addEventListener("click",e=>{if(e.target===$("help"))$("help").classLi
 const STATS_CLASSES=[
  {key:"verbs",label:"Verbos"},
  {key:"modals",label:"Modais"},
- {key:"hhh",label:"have · has · had"}
+ {key:"hhh",label:"have · has · had"},
+ {key:"be",label:"to be"}
 ];
 const HHH_SUB={have:"I · you · we · they",has:"he · she · it",had:"passado — qualquer sujeito","hasn't":"negativa de has"};
+const BE_SUB={am:"I",is:"he · she · it",are:"you · we · they",was:"passado — I/he/she/it",were:"passado — you/we/they",been:"particípio (com have)",being:"gerúndio -ing"};
 // agrega os itens da classe por palavra (verbos pelo verbo-base; o resto pela resposta)
 function statsGroups(key){
   let pool,keyOf,subOf;
   if(key==="verbs"){ pool=VERB_POOL; keyOf=it=>it.base; subOf=(k,its)=>V[k][0]; }
   else if(key==="modals"){ pool=[...MODAL_POOL,...SCEN_POOL]; keyOf=it=>it.answer.toLowerCase();
     subOf=(k,its)=>{const m=MODAL_DEFS.find(d=>d.answer.toLowerCase()===k); return m?m.cue:its.length+" situação(ões)";}; }
-  else { pool=HHH_POOL; keyOf=it=>it.answer.toLowerCase(); subOf=k=>HHH_SUB[k]||""; }
+  else if(key==="hhh"){ pool=HHH_POOL; keyOf=it=>it.answer.toLowerCase(); subOf=k=>HHH_SUB[k]||""; }
+  else { pool=BE_POOL; keyOf=it=>it.answer.toLowerCase(); subOf=k=>BE_SUB[k]||""; }
   const map=new Map();
   pool.forEach(it=>{const k=keyOf(it); if(!map.has(k))map.set(k,[]); map.get(k).push(it);});
   const rows=[...map].map(([k,its])=>{
@@ -1274,7 +1349,7 @@ function openStats(cls){
   $("statsM").classList.add("show");
   statsSyncCheck();
 }
-$("statsBtn").onclick=()=>openStats(["verbs","modals","hhh"].includes(mode)?mode:"verbs");
+$("statsBtn").onclick=()=>openStats(["verbs","modals","hhh","be"].includes(mode)?mode:"verbs");
 $("statsClose").onclick=()=>$("statsM").classList.remove("show");
 $("statsM").addEventListener("click",e=>{if(e.target===$("statsM"))$("statsM").classList.remove("show");});
 
@@ -1284,6 +1359,8 @@ function renderSyncPanel(){
   const seen=!!localStorage.getItem("jv-gconnected");
   $("gConnect").textContent=live?"sincronizar agora":(seen?"reconectar com Google":"conectar com Google");
   $("gDisc").style.display=live?"inline-block":"none";
+  const btn=$("syncBtn");
+  if(btn) btn.classList.toggle("unsynced",!live);   // vermelho quando não logado/sincronizado
 }
 function openSync(){
   renderSyncPanel();
@@ -1314,12 +1391,13 @@ $("gReset").onclick=resetProgress;
 // ============================================================
 function setMode(m){
   mode=m;
-  const map={verbs:"tab-verbs",modals:"tab-modals",hhh:"tab-hhh"};
+  const map={verbs:"tab-verbs",modals:"tab-modals",hhh:"tab-hhh",be:"tab-be"};
   for(const k in map)$(map[k]).className="tab"+(m===k?" on-"+k:"");
   const rib=$("ribbon"),rl=$("rlabel");
   if(m==="verbs"){rib.className="ribbon verbs";rl.textContent="Verbos · escreva a forma";startVerbs();}
   else if(m==="modals"){rib.className="ribbon modals";rl.textContent="Modais · escreva a resposta";startModals();}
   else if(m==="hhh"){rib.className="ribbon hhh";rl.textContent="have · has · had";startHHH();}
+  else if(m==="be"){rib.className="ribbon be";rl.textContent="to be · am · is · are · was · were";startBE();}
   else if(m==="daily"){rib.className="ribbon daily";rl.textContent="▶ Treino do dia";nextDailyStep();}
   const rh=$("ribHelp");
   if(MODE2CLS[m]){rh.classList.remove("hide");rh.onclick=()=>openHelp(MODE2CLS[m]);}
@@ -1329,10 +1407,12 @@ function setMode(m){
 $("tab-verbs").onclick=()=>setMode("verbs");
 $("tab-modals").onclick=()=>setMode("modals");
 $("tab-hhh").onclick=()=>setMode("hhh");
+$("tab-be").onclick=()=>setMode("be");
 $("heroBtn").onclick=startDaily;
 
 updStats();
 setMode("verbs");
+renderSyncPanel();   // botão sync já nasce vermelho se não estiver logado/sincronizado
 
 if("serviceWorker" in navigator){
   addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
